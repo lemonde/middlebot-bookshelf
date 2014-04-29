@@ -1,0 +1,24 @@
+{
+  "name": "bookshelf-middlewares",
+  "description": "middleman middlewares for bookshelf models",
+  "version": "0.1.0",
+  "scripts": {
+    "test": "mocha test/ --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lemonde/bookshelf-middlewares.git"
+  },
+  "author": "Yannick Dominguez <yannick.dominguez@gmail.com>",
+  "main": "lib/index.js",
+  "dependencies": {
+    "lodash": "~2.4.1",
+    "underscore.string": "~2.3.3"
+  },
+  "devDependencies": {
+    "chai": "~1.7.2",
+    "mocha": "~1.13.0",
+    "sqlite3": "~2.2.0",
+    "pg-database": "git+ssh://git@github.com:lemonde/pg-database.git#v0.1.2"
+  }
+}
