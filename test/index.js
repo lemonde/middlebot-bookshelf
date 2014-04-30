@@ -7,7 +7,7 @@ var PgDatabase = require('pg-database');
 var authorSchema = require('pg-database/lib/schemas/authors');
 var bookshelfMiddleware = require('../lib/');
 
-describe('fetch one item in a table', function () {
+describe('CRUD methods on ORM objects', function () {
   var res, req, database, knex;
 
   beforeEach(function (done) {
@@ -32,11 +32,11 @@ describe('fetch one item in a table', function () {
   it('should fetch an author with its id', function (done) {
     req.where = {id: 1};
 
-    bookshelfMiddleware({Model: database.Author})
+    bookshelfMiddleware({model: database.Author})
     .find(null, req, res, function (err) {
       if (err) done(err);
-      expect(res.attributes.long_name).to.equal('George Abitbol');
-      expect(res.attributes.short_name).to.equal('G.A.');
+      expect(res.body.attributes.long_name).to.equal('George Abitbol');
+      expect(res.body.attributes.short_name).to.equal('G.A.');
       done();
     });
 
@@ -45,11 +45,30 @@ describe('fetch one item in a table', function () {
   it('should fetch an author its long name', function (done) {
     req.where = {long_name: 'George Abitbol'};
 
-    bookshelfMiddleware({Model: database.Author})
+    bookshelfMiddleware({model: database.Author})
     .find(null, req, res, function (err) {
       if (err) done(err);
-      expect(res.attributes.long_name).to.equal('George Abitbol');
-      expect(res.attributes.short_name).to.equal('G.A.');
+      expect(res.body.attributes.long_name).to.equal('George Abitbol');
+      expect(res.body.attributes.short_name).to.equal('G.A.');
+      done();
+    });
+  });
+
+  it('should fetch all authors', function (done) {
+    req.params = {
+      sortBy: 'id',
+      sortDirection: 'desc',
+      limit: 20,
+      offset: 0,
+    };
+
+    bookshelfMiddleware({model: database.Author})
+    .findAll(null, req, res, function (err) {
+      if (err) return done(err);
+      expect(res.body.length).to.equal(2);
+      expect(res.body.metadata.limit).to.equal(20);
+      expect(res.body.metadata.offset).to.equal(0);
+      expect(res.body.metadata.count).to.not.exist;
       done();
     });
   });
@@ -74,7 +93,13 @@ describe('fetch one item in a table', function () {
       long_name: 'George Abitbol',
       short_name: 'G.A.',
       origin: 'L\'homme le plus classe du monde'
-    }).exec(done);
+    }).exec(function () {
+      database.Author.forge().save({
+        long_name: 'George Abitbol2',
+        short_name: 'G.A.2',
+        origin: 'L\'homme le plus classe du monde2'
+      }).exec(done);
+    });
   }
 });
 
