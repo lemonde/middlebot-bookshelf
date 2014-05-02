@@ -32,8 +32,8 @@ describe('CRUD methods on ORM objects', function () {
   it('should fetch an author with its id', function (done) {
     req.where = {id: 1};
 
-    bookshelfMiddleware({model: database.Author})
-    .find(null, req, res, function (err) {
+    bookshelfMiddleware.find({model: database.Author})
+    (null, req, res, function (err) {
       if (err) done(err);
       expect(res.body.attributes.long_name).to.equal('George Abitbol');
       expect(res.body.attributes.short_name).to.equal('G.A.');
@@ -45,8 +45,8 @@ describe('CRUD methods on ORM objects', function () {
   it('should fetch an author its long name', function (done) {
     req.where = {long_name: 'George Abitbol'};
 
-    bookshelfMiddleware({model: database.Author})
-    .find(null, req, res, function (err) {
+    bookshelfMiddleware.find({model: database.Author})
+    (null, req, res, function (err) {
       if (err) done(err);
       expect(res.body.attributes.long_name).to.equal('George Abitbol');
       expect(res.body.attributes.short_name).to.equal('G.A.');
@@ -62,8 +62,8 @@ describe('CRUD methods on ORM objects', function () {
       offset: 0,
     };
 
-    bookshelfMiddleware({model: database.Author})
-    .findAll(null, req, res, function (err) {
+    bookshelfMiddleware.findAll({model: database.Author})
+    (null, req, res, function (err) {
       if (err) return done(err);
       expect(res.body.length).to.equal(2);
       expect(res.body.metadata.limit).to.equal(20);
