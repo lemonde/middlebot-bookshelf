@@ -102,6 +102,36 @@ describe('CRUD methods on ORM objects', function () {
     });
   });
 
+  describe('#search', function() {
+    it('should search for an author', function (done) {
+      req.where = {
+        search: {
+          q: 'test'
+        }
+      };
+
+      var index = {
+        search: function(q, searchParams, next) {
+          expect(q).to.equal('test');
+          next(null, {
+            documents: [{
+              id: 0
+            }, {
+              id: 5
+            }]
+          });
+        }
+      };
+
+      bookshelfMiddleware.search({index: index})
+      (null, req, res, function(err) {
+        if(err) return done(err);
+        expect(req.where.id).to.deep.equal([0, 5]);
+        done();
+      });
+    });
+  });
+
   function resetTable(done) {
     knex.schema.dropTableIfExists('authors')
     .exec(function () {
