@@ -29,47 +29,76 @@ describe('CRUD methods on ORM objects', function () {
     req = {};
   });
 
-  it('should fetch an author with its id', function (done) {
-    req.where = {id: 1};
+  describe('#find', function() {
+    it('should fetch an author with its id', function (done) {
+      req.where = {id: 1};
 
-    bookshelfMiddleware.find({model: database.Author})
-    (null, req, res, function (err) {
-      if (err) done(err);
-      expect(res.body.attributes.long_name).to.equal('George Abitbol');
-      expect(res.body.attributes.short_name).to.equal('G.A.');
-      done();
+      bookshelfMiddleware.find({model: database.Author})
+      (null, req, res, function (err) {
+        if (err) done(err);
+        expect(res.body.attributes.long_name).to.equal('George Abitbol');
+        expect(res.body.attributes.short_name).to.equal('G.A.');
+        done();
+      });
+
     });
 
-  });
+    it('should fetch an author its long name', function (done) {
+      req.where = {long_name: 'George Abitbol'};
 
-  it('should fetch an author its long name', function (done) {
-    req.where = {long_name: 'George Abitbol'};
-
-    bookshelfMiddleware.find({model: database.Author})
-    (null, req, res, function (err) {
-      if (err) done(err);
-      expect(res.body.attributes.long_name).to.equal('George Abitbol');
-      expect(res.body.attributes.short_name).to.equal('G.A.');
-      done();
+      bookshelfMiddleware.find({model: database.Author})
+      (null, req, res, function (err) {
+        if (err) done(err);
+        expect(res.body.attributes.long_name).to.equal('George Abitbol');
+        expect(res.body.attributes.short_name).to.equal('G.A.');
+        done();
+      });
     });
   });
 
-  it('should fetch all authors', function (done) {
-    req.params = {
-      sortBy: 'id',
-      sortDirection: 'desc',
-      limit: 20,
-      offset: 0,
-    };
+  describe('#findAll', function() {
+    it('should fetch all authors', function (done) {
+      req.params = {
+        sortBy: 'id',
+        sortDirection: 'desc',
+        limit: 20,
+        offset: 0,
+      };
 
-    bookshelfMiddleware.findAll({model: database.Author})
-    (null, req, res, function (err) {
-      if (err) return done(err);
-      expect(res.body.length).to.equal(2);
-      expect(res.body.metadata.limit).to.equal(20);
-      expect(res.body.metadata.offset).to.equal(0);
-      expect(res.body.metadata.count).to.not.exist;
-      done();
+      bookshelfMiddleware.findAll({model: database.Author})
+      (null, req, res, function (err) {
+        if (err) return done(err);
+        expect(res.body.length).to.equal(2);
+        expect(res.body.metadata.limit).to.equal(20);
+        expect(res.body.metadata.offset).to.equal(0);
+        expect(res.body.metadata.count).to.not.exist;
+        done();
+      });
+    });
+  });
+
+  describe('#create', function() {
+    it('should create an author', function (done) {
+      req.data = {
+        long_name: 'Georges Abitbol',
+        short_name: 'G.A.'
+      };
+      bookshelfMiddleware.create({model: database.Author})
+      (null, req, res, function (err) {
+        if (err) return done(err);
+        done();
+      });
+    });
+  });
+
+  describe('#destroy', function() {
+    it('should destroy an author', function (done) {
+      req.id = 0;
+      bookshelfMiddleware.destroy({model: database.Author})
+      (null, req, res, function (err) {
+        if(err) return done(err);
+        done();
+      });
     });
   });
 
