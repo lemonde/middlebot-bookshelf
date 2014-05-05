@@ -250,6 +250,8 @@ describe('CRUD methods on ORM objects', function () {
       bookshelfMiddleware.create({model: database.Author})
       (null, req, res, function (err) {
         if (err) return done(err);
+        expect(res.body).to.exists;
+        expect(res.body.attributes.long_name).to.equal('Georges Abitbol');
         done();
       });
     });
@@ -261,6 +263,7 @@ describe('CRUD methods on ORM objects', function () {
       bookshelfMiddleware.destroy({model: database.Author})
       (null, req, res, function (err) {
         if(err) return done(err);
+        expect(res.body).to.exists;
         done();
       });
     });
