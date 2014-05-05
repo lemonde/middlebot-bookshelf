@@ -252,19 +252,62 @@ describe('CRUD methods on ORM objects', function () {
         if (err) return done(err);
         expect(res.body).to.exists;
         expect(res.body.attributes.long_name).to.equal('Georges Abitbol');
-        done();
+
+        req.params = {
+          sortBy: 'id',
+          sortDirection: 'desc',
+          limit: 20,
+          offset: 0,
+        };
+        bookshelfMiddleware.findAll({model: database.Author})
+        (null, req, res, function (){
+          expect(res.body.length).to.equal(3);
+          done();
+        });
       });
     });
   });
 
   describe('#destroy', function() {
     it('should destroy an author', function (done) {
-      req.id = 0;
+      req.id = 1;
       bookshelfMiddleware.destroy({model: database.Author})
       (null, req, res, function (err) {
         if(err) return done(err);
         expect(res.body).to.exists;
-        done();
+
+        req.params = {
+          sortBy: 'id',
+          sortDirection: 'desc',
+          limit: 20,
+          offset: 0,
+        };
+        bookshelfMiddleware.findAll({model: database.Author})
+        (null, req, res, function (){
+          expect(res.body.length).to.equal(1);
+          done();
+        });
+      });
+    });
+
+    it('should not destroy if author not found', function (done) {
+      req.id = 10;
+      bookshelfMiddleware.destroy({model: database.Author})
+      (null, req, res, function (err) {
+        if(err) return done(err);
+        expect(res.body).to.exists;
+
+        req.params = {
+          sortBy: 'id',
+          sortDirection: 'desc',
+          limit: 20,
+          offset: 0,
+        };
+        bookshelfMiddleware.findAll({model: database.Author})
+        (null, req, res, function (){
+          expect(res.body.length).to.equal(2);
+          done();
+        });
       });
     });
   });
