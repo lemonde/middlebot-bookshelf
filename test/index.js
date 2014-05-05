@@ -30,17 +30,38 @@ describe('CRUD methods on ORM objects', function () {
   });
 
   describe('#find', function() {
-    it('should fetch an author with its id', function (done) {
+    it('should be possible to find an object by id', function (done) {
       req.where = {id: 1};
 
       bookshelfMiddleware.find({model: database.Author})
       (null, req, res, function (err) {
-        if (err) done(err);
+        if (err) return done(err);
         expect(res.body.attributes.long_name).to.equal('George Abitbol');
         expect(res.body.attributes.short_name).to.equal('G.A.');
         done();
       });
+    });
 
+    it('should return null when an object is not found', function (done) {
+      req.where = {id: 10};
+
+      bookshelfMiddleware.find({model: database.Author})
+      (null, req, res, function (err) {
+        if (err) return done(err);
+        expect(res.body).to.be.null;
+        done();
+      });
+    });
+
+    it('should be possible to add withRelated option in where', function (done) {
+      req.where = {id: 1};
+      req.opts = {withRelated: 'user'};
+
+      bookshelfMiddleware.find({model: database.Author})
+      (null, req, res, function (err) {
+        if (err) return done(err);
+        done();
+      });
     });
 
     it('should fetch an author its long name', function (done) {
@@ -72,6 +93,149 @@ describe('CRUD methods on ORM objects', function () {
         expect(res.body.metadata.limit).to.equal(20);
         expect(res.body.metadata.offset).to.equal(0);
         expect(res.body.metadata.count).to.not.exist;
+        done();
+      });
+    });
+
+    it('should be possible to find objects by function', function (done) {
+      req.params = {
+        sortBy: 'id',
+        sortDirection: 'desc',
+        limit: 20,
+        offset: 0,
+      };
+
+      req.where = function (qb) {
+        qb.where({id: 1});
+      };
+
+      bookshelfMiddleware.findAll({model: database.Author})
+      (null, req, res, function (err) {
+        if (err) return done(err);
+        expect(res.body).to.length(1);
+        expect(res.body.models[0]).to.have.property('id', 1);
+        done();
+      });
+    });
+
+    it('should be possible to add a withRelated in where', function (done) {
+      req.params = {
+        sortBy: 'id',
+        sortDirection: 'desc',
+        limit: 20,
+        offset: 0,
+      };
+
+      req.where = {id: 1, withRelated: 'user'};
+
+      bookshelfMiddleware.findAll({model: database.Author})
+      (null, req, res, function (err) {
+        if (err) return done(err);
+        expect(res.body).to.length(0);
+        done();
+      });
+    });
+
+    it('should be possible to set a limit', function (done) {
+      req.params = {
+        sortBy: 'id',
+        sortDirection: 'desc',
+        limit: 1,
+        offset: 0,
+      };
+
+      bookshelfMiddleware.findAll({model: database.Author})
+      (null, req, res, function (err) {
+        if (err) return done(err);
+        expect(res.body.length).to.equal(1);
+        done();
+      });
+    });
+
+    it('should be possible to set an offset', function (done) {
+      req.params = {
+        sortBy: 'id',
+        sortDirection: 'desc',
+        limit: 10,
+        offset: 1,
+      };
+
+      bookshelfMiddleware.findAll({model: database.Author})
+      (null, req, res, function (err) {
+        if (err) return done(err);
+        expect(res.body.length).to.equal(1);
+        expect(res.body.models[0]).to.have.property('id', 1);
+        done();
+      });
+    });
+
+    it('should be possible to set a sortBy', function (done) {
+      req.params = {
+        sortBy: 'shortName',
+        sortDirection: 'ASC',
+        limit: 10,
+        offset: 0,
+      };
+
+      bookshelfMiddleware.findAll({model: database.Author})
+      (null, req, res, function (err) {
+        if (err) return done(err);
+        expect(res.body.models[0]).to.have.property('id', 1);
+        done();
+      });
+    });
+
+    it('should be possible to set a sortDirection', function (done) {
+      req.params = {
+        sortBy: 'id',
+        sortDirection: 'DESC',
+        limit: 10,
+        offset: 0,
+      };
+
+      bookshelfMiddleware.findAll({model: database.Author})
+      (null, req, res, function (err) {
+        if (err) return done(err);
+        expect(res.body.models[0]).to.have.property('id', 2);
+        done();
+      });
+    });
+
+    it('should be possible to find multiple values', function (done) {
+      req.params = {
+        sortBy: 'id',
+        sortDirection: 'desc',
+        limit: 20,
+        offset: 0,
+      };
+
+      req.whereIn = {id: [1, 2]};
+
+      bookshelfMiddleware.findAll({model: database.Author})
+      (null, req, res, function (err) {
+        if (err) return done(err);
+        expect(res.body.length).to.equal(2);
+        done();
+      });
+    });
+
+    it('should be possible to count', function (done) {
+      req.params = {
+        sortBy: 'id',
+        sortDirection: 'desc',
+        limit: 20,
+        offset: 0,
+        count: true
+      };
+
+      bookshelfMiddleware.findAll({model: database.Author})
+      (null, req, res, function (err) {
+        if (err) return done(err);
+        expect(res.body.metadata).to.eql({
+          offset: 0,
+          limit: 20,
+          count: 2
+        });
         done();
       });
     });
