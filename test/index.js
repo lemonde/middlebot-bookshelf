@@ -7,12 +7,7 @@ var PgDatabase = require('pg-database');
 var authorSchema = require('pg-database/lib/schemas/authors');
 var bookshelfMiddleware = require('../');
 
-describe('CRUD methods on ORM objects', function () {
-  var res, req, database, knex;
-
-  beforeEach(function (done) {
-
-    database = new PgDatabase({
+var database = new PgDatabase({
       'client': 'sqlite',
       'connection': {
         'filename': ':memory:'
@@ -21,6 +16,13 @@ describe('CRUD methods on ORM objects', function () {
         'max': 1
       }
     });
+
+var bookshelf = database.bookshelf;
+
+describe('CRUD methods on ORM objects', function () {
+  var res, req, knex;
+
+  beforeEach(function (done) {
 
     knex = database.bookshelf.knex;
     resetTable(done);
@@ -372,3 +374,201 @@ describe('CRUD methods on ORM objects', function () {
   }
 });
 
+describe('req and res formatters', function() {
+  describe('snake case formatter', function() {
+    it('should convert camel-case keys to snake case', function() {
+      var input = {
+        where: {
+          testData : 1,
+          AnotherTestData : 'test'
+        }
+      };
+
+      bookshelfMiddleware.snakeCaseKeys()(null, input, {}, function() {
+        expect(input.where.testData).to.not.exists;
+        expect(input.where.AnotherTestData).to.not.exists;
+        expect(input.where.test_data).to.exists;
+        expect(input.where.another_test_data).to.exists;
+      });
+    });
+
+    it('should work with deep', function () {
+
+      var input = {};
+      input.where = {
+        ar: [
+          {
+            bigTest: true
+          }
+        ],
+        foo: { barTrue: true }
+      };
+
+      bookshelfMiddleware.snakeCaseKeys()(null, input, {}, function() {
+        expect(input.where).to.eql({
+          ar: [
+            {
+              big_test: true
+            }
+          ],
+          foo: { bar_true: true }
+        });
+      });
+    });
+  });
+
+  describe('#camelizeKeys', function () {
+    it('should camelize all keys', function () {
+      var input = {
+        where:{
+          first_name: 'Johny',
+          last_name: 'Begood'
+        }
+      };
+
+      bookshelfMiddleware.camelizeKeys()(null, input, {}, function() {
+        expect(input.where).to.eql({
+          firstName: 'Johny',
+          lastName: 'Begood'
+        });
+      });
+    });
+  });
+
+    it('should work with deep', function () {
+    var input = {
+      where:{
+        ar: [
+          {
+            big_test: true
+          }
+        ],
+        foo: { bar_true: true }
+      }
+    };
+    bookshelfMiddleware.camelizeKeys()(null, input, {}, function() {
+      expect(input.where).to.eql({
+        ar: [
+          {
+            bigTest: true
+          }
+        ],
+        foo: { barTrue: true }
+      });
+    });
+  });
+
+  describe('#formatFindAllOptions', function() {
+    it('should provide default for findAll query', function () {
+      var input = {};
+      bookshelfMiddleware.formatFindAllOptions()(null, input, {}, function() {
+        expect(input).to.deep.equal({
+          options: {sortBy: 'id', sortDirection: 'desc', limit:20, offset:0},
+          opts: {sortBy: 'id', sortDirection: 'desc', limit:20, offset:0},
+          paramNames: ['sortBy', 'sortDirection', 'limit', 'offset', 'count'],
+          params: { sortBy: 'id', sortDirection: 'desc', limit: 20, offset: 0 },
+          where: {},
+          whereIn: {}
+        });
+      });
+    });
+
+    it('should not override provided parameters', function () {
+      var input = {
+        options: {
+          sortBy:'test',
+          sortDirection: 'asc'
+        }
+      };
+      bookshelfMiddleware.formatFindAllOptions()(null, input, {}, function() {
+        expect(input.options.sortBy).to.equal('test');
+        expect(input.options.sortDirection).to.equal('asc');
+      });
+    });
+
+    it('should not convert input if where is a function', function () {
+      var input = {
+        where: function () {
+
+        }
+      };
+      bookshelfMiddleware.formatFindAllOptions()(null, input, {}, function() {
+        expect(input.where).to.be.a('function');
+      });
+
+    });
+
+    it('should remove array from where value', function () {
+      var input = {
+        where: {id: [1, 2]}
+      };
+
+      bookshelfMiddleware.formatFindAllOptions()(null, input, {}, function() {
+        expect(input.where).to.be.empty;
+        expect(input.whereIn).to.eql({id: [1,2]});
+      });
+    });
+  });
+
+  describe('#formatFindOptions', function() {
+    it('should provide default for find query', function() {
+      var input = {};
+      bookshelfMiddleware.formatFindOptions()(null, input, {}, function() {
+        expect(input).to.deep.equal({
+          options: {},
+          where: {id: undefined},
+          opts: {}
+        });
+      });
+    });
+
+    it('should convert where to an object', function () {
+      var input = {
+        where: 1
+      };
+      bookshelfMiddleware.formatFindOptions()(null, input, {}, function() {
+        expect(input.where).to.eql({ id: 1 });
+      });
+
+    });
+
+    it('should pick withRelated from where', function () {
+      var input = {
+        where: {
+          withRelated: 'test'
+        }
+      };
+      bookshelfMiddleware.formatFindOptions()(null, input, {}, function() {
+        expect(input.opts.withRelated).to.eql('test');
+        expect(input.where.withRelated).to.not.exists;
+      });
+    });
+  });
+
+  describe('#formatBackboneModel', function () {
+    it('should convert model to JSON', function () {
+      var model = new bookshelf.Model({ big_foo: 'bar' });
+
+      var res = {};
+      res.body = model;
+
+      bookshelfMiddleware.formatBackboneModel()(null, {}, res, function() {
+        expect(res.body).to.eql({ bigFoo: 'bar' });
+      });
+    });
+  });
+
+  describe('#formatBackboneCollection', function () {
+    it('should convert collection to JSON', function () {
+      var model = new bookshelf.Model({ big_foo: 'bar' });
+      var collection = new bookshelf.Collection([model]);
+
+      var res = {};
+      res.body = collection;
+
+      bookshelfMiddleware.formatBackboneCollection()(null, {}, res, function() {
+        expect(res.body).to.eql([{ bigFoo: 'bar' }]);
+      });
+    });
+  });
+});
