@@ -5,7 +5,7 @@ var expect = chai.expect;
 
 var PgDatabase = require('pg-database');
 var authorSchema = require('pg-database/lib/schemas/authors');
-var bookshelfMiddleware = require('../lib/');
+var bookshelfMiddleware = require('../');
 
 describe('CRUD methods on ORM objects', function () {
   var res, req, database, knex;
