@@ -81,7 +81,7 @@ describe('CRUD methods on ORM objects', function () {
 
   describe('#findAll', function() {
     it('should fetch all authors', function (done) {
-      req.params = {
+      req.options = {
         sortBy: 'id',
         sortDirection: 'desc',
         limit: 20,
@@ -92,15 +92,15 @@ describe('CRUD methods on ORM objects', function () {
       (null, req, res, function (err) {
         if (err) return done(err);
         expect(res.body.length).to.equal(2);
-        expect(res.body.metadata.limit).to.equal(20);
-        expect(res.body.metadata.offset).to.equal(0);
-        expect(res.body.metadata.count).to.not.exist;
+        expect(res.metadata.limit).to.equal(20);
+        expect(res.metadata.offset).to.equal(0);
+        expect(res.metadata.count).to.not.exist;
         done();
       });
     });
 
     it('should be possible to find objects by function', function (done) {
-      req.params = {
+      req.options = {
         sortBy: 'id',
         sortDirection: 'desc',
         limit: 20,
@@ -121,7 +121,7 @@ describe('CRUD methods on ORM objects', function () {
     });
 
     it('should be possible to add a withRelated in where', function (done) {
-      req.params = {
+      req.options = {
         sortBy: 'id',
         sortDirection: 'desc',
         limit: 20,
@@ -139,7 +139,7 @@ describe('CRUD methods on ORM objects', function () {
     });
 
     it('should be possible to set a limit', function (done) {
-      req.params = {
+      req.options = {
         sortBy: 'id',
         sortDirection: 'desc',
         limit: 1,
@@ -155,7 +155,7 @@ describe('CRUD methods on ORM objects', function () {
     });
 
     it('should be possible to set an offset', function (done) {
-      req.params = {
+      req.options = {
         sortBy: 'id',
         sortDirection: 'desc',
         limit: 10,
@@ -172,7 +172,7 @@ describe('CRUD methods on ORM objects', function () {
     });
 
     it('should be possible to set a sortBy', function (done) {
-      req.params = {
+      req.options = {
         sortBy: 'shortName',
         sortDirection: 'ASC',
         limit: 10,
@@ -188,7 +188,7 @@ describe('CRUD methods on ORM objects', function () {
     });
 
     it('should be possible to set a sortDirection', function (done) {
-      req.params = {
+      req.options = {
         sortBy: 'id',
         sortDirection: 'DESC',
         limit: 10,
@@ -204,7 +204,7 @@ describe('CRUD methods on ORM objects', function () {
     });
 
     it('should be possible to find multiple values', function (done) {
-      req.params = {
+      req.options = {
         sortBy: 'id',
         sortDirection: 'desc',
         limit: 20,
@@ -222,7 +222,7 @@ describe('CRUD methods on ORM objects', function () {
     });
 
     it('should be possible to count', function (done) {
-      req.params = {
+      req.options = {
         sortBy: 'id',
         sortDirection: 'desc',
         limit: 20,
@@ -233,7 +233,7 @@ describe('CRUD methods on ORM objects', function () {
       bookshelfMiddleware.findAll({model: database.Author})
       (null, req, res, function (err) {
         if (err) return done(err);
-        expect(res.body.metadata).to.eql({
+        expect(res.metadata).to.eql({
           offset: 0,
           limit: 20,
           count: 2
@@ -245,7 +245,7 @@ describe('CRUD methods on ORM objects', function () {
 
   describe('#create', function() {
     it('should create an author', function (done) {
-      req.data = {
+      req.body = {
         long_name: 'Georges Abitbol',
         short_name: 'G.A.'
       };
@@ -255,7 +255,7 @@ describe('CRUD methods on ORM objects', function () {
         expect(res.body).to.exists;
         expect(res.body.attributes.long_name).to.equal('Georges Abitbol');
 
-        req.params = {
+        req.options = {
           sortBy: 'id',
           sortDirection: 'desc',
           limit: 20,
@@ -272,13 +272,17 @@ describe('CRUD methods on ORM objects', function () {
 
   describe('#destroy', function() {
     it('should destroy an author', function (done) {
-      req.id = 1;
+      req = {
+        query: {
+          id: 1
+        }
+      };
       bookshelfMiddleware.destroy({model: database.Author})
       (null, req, res, function (err) {
         if(err) return done(err);
         expect(res.body).to.exists;
 
-        req.params = {
+        req.options = {
           sortBy: 'id',
           sortDirection: 'desc',
           limit: 20,
@@ -293,13 +297,17 @@ describe('CRUD methods on ORM objects', function () {
     });
 
     it('should not destroy if author not found', function (done) {
-      req.id = 10;
+      req = {
+        query: {
+          id: 10
+        }
+      }
       bookshelfMiddleware.destroy({model: database.Author})
       (null, req, res, function (err) {
         if(err) return done(err);
         expect(res.body).to.exists;
 
-        req.params = {
+        req.options = {
           sortBy: 'id',
           sortDirection: 'desc',
           limit: 20,
@@ -316,26 +324,22 @@ describe('CRUD methods on ORM objects', function () {
 
   describe('#search', function() {
     it('should search for an author', function (done) {
-      req.where = {
-        search: {
+      req.query= {
           q: 'test'
-        }
       };
 
-      var index = {
-        search: function(q, searchParams, next) {
-          expect(q).to.equal('test');
-          next(null, {
-            documents: [{
-              id: 0
-            }, {
-              id: 5
-            }]
-          });
-        }
+      function search(q, searchParams, next) {
+        expect(q).to.equal('test');
+        next(null, {
+          documents: [{
+            id: 0
+          }, {
+            id: 5
+          }]
+        });
       };
 
-      bookshelfMiddleware.search({index: index})
+      bookshelfMiddleware.search({search: search})
       (null, req, res, function(err) {
         if(err) return done(err);
         expect(req.where.id).to.deep.equal([0, 5]);
@@ -463,12 +467,11 @@ describe('req and res formatters', function() {
       var input = {};
       bookshelfMiddleware.formatFindAllOptions()(null, input, {}, function() {
         expect(input).to.deep.equal({
-          options: {sortBy: 'id', sortDirection: 'desc', limit:20, offset:0},
-          opts: {sortBy: 'id', sortDirection: 'desc', limit:20, offset:0},
-          paramNames: ['sortBy', 'sortDirection', 'limit', 'offset', 'count'],
-          params: { sortBy: 'id', sortDirection: 'desc', limit: 20, offset: 0 },
-          where: {},
-          whereIn: {}
+          options: {
+            sortBy: 'id', sortDirection: 'desc', limit:20, offset:0,
+            whereIn: {}
+          },
+          where: {}
         });
       });
     });
@@ -505,7 +508,7 @@ describe('req and res formatters', function() {
 
       bookshelfMiddleware.formatFindAllOptions()(null, input, {}, function() {
         expect(input.where).to.be.empty;
-        expect(input.whereIn).to.eql({id: [1,2]});
+        expect(input.options.whereIn).to.eql({id: [1,2]});
       });
     });
   });
@@ -516,8 +519,7 @@ describe('req and res formatters', function() {
       bookshelfMiddleware.formatFindOptions()(null, input, {}, function() {
         expect(input).to.deep.equal({
           options: {},
-          where: {id: undefined},
-          opts: {}
+          where: {id: undefined}
         });
       });
     });
@@ -539,7 +541,7 @@ describe('req and res formatters', function() {
         }
       };
       bookshelfMiddleware.formatFindOptions()(null, input, {}, function() {
-        expect(input.opts.withRelated).to.eql('test');
+        expect(input.options.withRelated).to.eql('test');
         expect(input.where.withRelated).to.not.exists;
       });
     });
