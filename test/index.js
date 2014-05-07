@@ -503,7 +503,7 @@ describe('req and res formatters', function() {
 
     it('should remove array from where value', function () {
       var input = {
-        where: {id: [1, 2]}
+        query: {id: [1, 2]}
       };
 
       bookshelfMiddleware.formatFindAllOptions()(input, {}, function() {
