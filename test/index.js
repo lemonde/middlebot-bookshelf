@@ -388,7 +388,7 @@ describe('req and res formatters', function() {
         }
       };
 
-      bookshelfMiddleware.snakeCaseKeys()(input, {}, function() {
+      bookshelfMiddleware.snakeCaseKeys({key: 'where'})(input, {}, function() {
         expect(input.where.testData).to.not.exists;
         expect(input.where.AnotherTestData).to.not.exists;
         expect(input.where.test_data).to.exists;
@@ -408,7 +408,7 @@ describe('req and res formatters', function() {
         foo: { barTrue: true }
       };
 
-      bookshelfMiddleware.snakeCaseKeys()(input, {}, function() {
+      bookshelfMiddleware.snakeCaseKeys({key: 'where'})(input, {}, function() {
         expect(input.where).to.eql({
           ar: [
             {
@@ -430,7 +430,7 @@ describe('req and res formatters', function() {
         }
       };
 
-      bookshelfMiddleware.camelizeKeys()(input, {}, function() {
+      bookshelfMiddleware.camelizeKeys({key: 'where'})(input, {}, function() {
         expect(input.where).to.eql({
           firstName: 'Johny',
           lastName: 'Begood'
@@ -450,7 +450,7 @@ describe('req and res formatters', function() {
         foo: { bar_true: true }
       }
     };
-    bookshelfMiddleware.camelizeKeys()(input, {}, function() {
+    bookshelfMiddleware.camelizeKeys({key: 'where'})(input, {}, function() {
       expect(input.where).to.eql({
         ar: [
           {
