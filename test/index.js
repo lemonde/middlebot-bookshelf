@@ -489,11 +489,9 @@ describe('req and res formatters', function() {
       });
     });
 
-    it('should not convert input if where is a function', function () {
+    it('should not convert input if query is a function', function () {
       var input = {
-        where: function () {
-
-        }
+        query: function () {}
       };
       bookshelfMiddleware.formatFindAllOptions()(input, {}, function() {
         expect(input.where).to.be.a('function');
