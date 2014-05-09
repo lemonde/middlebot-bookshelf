@@ -379,27 +379,27 @@ describe('CRUD methods on ORM objects', function () {
 });
 
 describe('req and res formatters', function() {
-  describe('snake case formatter', function() {
+  describe('#snakeCaseKeys', function() {
     it('should convert camel-case keys to snake case', function() {
       var input = {
-        where: {
+        test: {
           testData : 1,
           AnotherTestData : 'test'
         }
       };
 
-      bookshelfMiddleware.snakeCaseKeys({key: 'where'})(input, {}, function() {
-        expect(input.where.testData).to.not.exists;
-        expect(input.where.AnotherTestData).to.not.exists;
-        expect(input.where.test_data).to.exists;
-        expect(input.where.another_test_data).to.exists;
+      bookshelfMiddleware.snakeCaseKeys({key: 'test'})(input, {}, function() {
+        expect(input.test.testData).to.not.exists;
+        expect(input.test.AnotherTestData).to.not.exists;
+        expect(input.test.test_data).to.exists;
+        expect(input.test.another_test_data).to.exists;
       });
     });
 
     it('should work with deep', function () {
 
       var input = {};
-      input.where = {
+      input.test = {
         ar: [
           {
             bigTest: true
@@ -408,8 +408,8 @@ describe('req and res formatters', function() {
         foo: { barTrue: true }
       };
 
-      bookshelfMiddleware.snakeCaseKeys({key: 'where'})(input, {}, function() {
-        expect(input.where).to.eql({
+      bookshelfMiddleware.snakeCaseKeys({key: 'test'})(input, {}, function() {
+        expect(input.test).to.eql({
           ar: [
             {
               big_test: true
@@ -424,14 +424,14 @@ describe('req and res formatters', function() {
   describe('#camelizeKeys', function () {
     it('should camelize all keys', function () {
       var input = {
-        where:{
+        test:{
           first_name: 'Johny',
           last_name: 'Begood'
         }
       };
 
-      bookshelfMiddleware.camelizeKeys({key: 'where'})(input, {}, function() {
-        expect(input.where).to.eql({
+      bookshelfMiddleware.camelizeKeys({key: 'test'})(input, {}, function() {
+        expect(input.test).to.eql({
           firstName: 'Johny',
           lastName: 'Begood'
         });
@@ -441,7 +441,7 @@ describe('req and res formatters', function() {
 
   it('should work with deep', function () {
     var input = {
-      where:{
+      test:{
         ar: [
           {
             big_test: true
@@ -450,8 +450,8 @@ describe('req and res formatters', function() {
         foo: { bar_true: true }
       }
     };
-    bookshelfMiddleware.camelizeKeys({key: 'where'})(input, {}, function() {
-      expect(input.where).to.eql({
+    bookshelfMiddleware.camelizeKeys({key: 'test'})(input, {}, function() {
+      expect(input.test).to.eql({
         ar: [
           {
             bigTest: true
