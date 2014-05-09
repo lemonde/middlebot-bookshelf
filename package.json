@@ -18,9 +18,9 @@
     "underscore.string": "^2.3.3"
   },
   "devDependencies": {
-    "chai": "~1.7.2",
-    "mocha": "~1.13.0",
-    "sqlite3": "~2.2.0",
-    "pg-database": "git+ssh://git@github.com:lemonde/pg-database.git#v0.1.2"
+    "bookshelf": "^0.6.10",
+    "chai": "^1.9.1",
+    "mocha": "^1.18.2",
+    "sqlite3": "^2.2.3"
   }
 }

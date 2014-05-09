@@ -2,40 +2,68 @@
 
 var chai = require('chai');
 var expect = chai.expect;
-
-var PgDatabase = require('pg-database');
-var authorSchema = require('pg-database/lib/schemas/authors');
 var bookshelfMiddleware = require('../');
+var Bookshelf = require('bookshelf');
+var bookshelf = Bookshelf.initialize({
+  client: 'sqlite',
+  connection: {
+    filename: ':memory:'
+  },
+  pool: {
+    max: 1
+  }
+});
+var knex = bookshelf.knex;
 
-var database = new PgDatabase({
-      'client': 'sqlite',
-      'connection': {
-        'filename': ':memory:'
-      },
-      'pool': {
-        'max': 1
-      }
+var Author = bookshelf.Model.extend({
+  tableName: 'authors'
+});
+
+function resetTable(done) {
+  knex.schema.dropTableIfExists('authors')
+  .then(function () {
+    return knex.schema.createTable('authors', function (table) {
+      table.engine('InnoDB');
+      table.timestamps();
+      table.charset('utf8');
+      table.increments('id').primary();
+      table.string('long_name');
+      table.string('short_name');
+      table.string('origin');
     });
-
-var bookshelf = database.bookshelf;
+  })
+  .then(function () {
+    return Author.forge().save({
+      long_name: 'George Abitbol',
+      short_name: 'G.A.',
+      origin: 'L\'homme le plus classe du monde'
+    });
+  })
+  .then(function () {
+    return Author.forge().save({
+      long_name: 'George Abitbol2',
+      short_name: 'G.A.2',
+      origin: 'L\'homme le plus classe du monde2'
+    });
+  })
+  .exec(done);
+}
 
 describe('CRUD methods on ORM objects', function () {
-  var res, req, knex;
+  var req, res;
 
-  beforeEach(function (done) {
-
-    knex = database.bookshelf.knex;
-    resetTable(done);
-
-    res = {};
+  beforeEach(function () {
     req = {};
+    res = {};
   });
+
+  beforeEach(resetTable);
 
   describe('#find', function() {
     it('should be possible to find an object by id', function (done) {
       req.where = {id: 1};
 
-      bookshelfMiddleware.find({model: database.Author})
+      bookshelfMiddleware.find({model: Author})
       (req, res, function (err) {
         if (err) return done(err);
         expect(res.body.attributes.long_name).to.equal('George Abitbol');
@@ -47,7 +75,7 @@ describe('CRUD methods on ORM objects', function () {
     it('should return null when an object is not found', function (done) {
       req.where = {id: 10};
 
-      bookshelfMiddleware.find({model: database.Author})
+      bookshelfMiddleware.find({model: Author})
       (req, res, function (err) {
         if (err) return done(err);
         expect(res.body).to.be.null;
@@ -59,7 +87,7 @@ describe('CRUD methods on ORM objects', function () {
       req.where = {id: 1};
       req.opts = {withRelated: 'user'};
 
-      bookshelfMiddleware.find({model: database.Author})
+      bookshelfMiddleware.find({model: Author})
       (req, res, function (err) {
         if (err) return done(err);
         done();
@@ -69,7 +97,7 @@ describe('CRUD methods on ORM objects', function () {
     it('should fetch an author its long name', function (done) {
       req.where = {long_name: 'George Abitbol'};
 
-      bookshelfMiddleware.find({model: database.Author})
+      bookshelfMiddleware.find({model: Author})
       (req, res, function (err) {
         if (err) done(err);
         expect(res.body.attributes.long_name).to.equal('George Abitbol');
@@ -88,7 +116,7 @@ describe('CRUD methods on ORM objects', function () {
         offset: 0,
       };
 
-      bookshelfMiddleware.findAll({model: database.Author})
+      bookshelfMiddleware.findAll({model: Author})
       (req, res, function (err) {
         if (err) return done(err);
         expect(res.body.length).to.equal(2);
@@ -111,7 +139,7 @@ describe('CRUD methods on ORM objects', function () {
         qb.where({id: 1});
       };
 
-      bookshelfMiddleware.findAll({model: database.Author})
+      bookshelfMiddleware.findAll({model: Author})
       (req, res, function (err) {
         if (err) return done(err);
         expect(res.body).to.length(1);
@@ -130,7 +158,7 @@ describe('CRUD methods on ORM objects', function () {
 
       req.where = {id: 1, withRelated: 'user'};
 
-      bookshelfMiddleware.findAll({model: database.Author})
+      bookshelfMiddleware.findAll({model: Author})
       (req, res, function (err) {
         if (err) return done(err);
         expect(res.body).to.length(0);
@@ -146,7 +174,7 @@ describe('CRUD methods on ORM objects', function () {
         offset: 0,
       };
 
-      bookshelfMiddleware.findAll({model: database.Author})
+      bookshelfMiddleware.findAll({model: Author})
       (req, res, function (err) {
         if (err) return done(err);
         expect(res.body.length).to.equal(1);
@@ -162,7 +190,7 @@ describe('CRUD methods on ORM objects', function () {
         offset: 1,
       };
 
-      bookshelfMiddleware.findAll({model: database.Author})
+      bookshelfMiddleware.findAll({model: Author})
       (req, res, function (err) {
         if (err) return done(err);
         expect(res.body.length).to.equal(1);
@@ -179,7 +207,7 @@ describe('CRUD methods on ORM objects', function () {
         offset: 0,
       };
 
-      bookshelfMiddleware.findAll({model: database.Author})
+      bookshelfMiddleware.findAll({model: Author})
       (req, res, function (err) {
         if (err) return done(err);
         expect(res.body.models[0]).to.have.property('id', 1);
@@ -195,7 +223,7 @@ describe('CRUD methods on ORM objects', function () {
         offset: 0,
       };
 
-      bookshelfMiddleware.findAll({model: database.Author})
+      bookshelfMiddleware.findAll({model: Author})
       (req, res, function (err) {
         if (err) return done(err);
         expect(res.body.models[0]).to.have.property('id', 2);
@@ -213,7 +241,7 @@ describe('CRUD methods on ORM objects', function () {
 
       req.whereIn = {id: [1, 2]};
 
-      bookshelfMiddleware.findAll({model: database.Author})
+      bookshelfMiddleware.findAll({model: Author})
       (req, res, function (err) {
         if (err) return done(err);
         expect(res.body.length).to.equal(2);
@@ -230,7 +258,7 @@ describe('CRUD methods on ORM objects', function () {
         count: true
       };
 
-      bookshelfMiddleware.findAll({model: database.Author})
+      bookshelfMiddleware.findAll({model: Author})
       (req, res, function (err) {
         if (err) return done(err);
         expect(res.metadata).to.eql({
@@ -249,7 +277,7 @@ describe('CRUD methods on ORM objects', function () {
         long_name: 'Georges Abitbol',
         short_name: 'G.A.'
       };
-      bookshelfMiddleware.create({model: database.Author})
+      bookshelfMiddleware.create({model: Author})
       (req, res, function (err) {
         if (err) return done(err);
         expect(res.body).to.exists;
@@ -261,7 +289,7 @@ describe('CRUD methods on ORM objects', function () {
           limit: 20,
           offset: 0,
         };
-        bookshelfMiddleware.findAll({model: database.Author})
+        bookshelfMiddleware.findAll({model: Author})
         (req, res, function (){
           expect(res.body.length).to.equal(3);
           done();
@@ -277,7 +305,7 @@ describe('CRUD methods on ORM objects', function () {
           id: 1
         }
       };
-      bookshelfMiddleware.destroy({model: database.Author})
+      bookshelfMiddleware.destroy({model: Author})
       (req, res, function (err) {
         if(err) return done(err);
         expect(res.body).to.exists;
@@ -288,7 +316,7 @@ describe('CRUD methods on ORM objects', function () {
           limit: 20,
           offset: 0,
         };
-        bookshelfMiddleware.findAll({model: database.Author})
+        bookshelfMiddleware.findAll({model: Author})
         (req, res, function (){
           expect(res.body.length).to.equal(1);
           done();
@@ -301,8 +329,9 @@ describe('CRUD methods on ORM objects', function () {
         query: {
           id: 10
         }
-      }
-      bookshelfMiddleware.destroy({model: database.Author})
+      };
+
+      bookshelfMiddleware.destroy({model: Author})
       (req, res, function (err) {
         if(err) return done(err);
         expect(res.body).to.exists;
@@ -313,7 +342,7 @@ describe('CRUD methods on ORM objects', function () {
           limit: 20,
           offset: 0,
         };
-        bookshelfMiddleware.findAll({model: database.Author})
+        bookshelfMiddleware.findAll({model: Author})
         (req, res, function (){
           expect(res.body.length).to.equal(2);
           done();
@@ -324,11 +353,11 @@ describe('CRUD methods on ORM objects', function () {
 
   describe('#search', function() {
     it('should search for an author', function (done) {
-      req.query= {
-          q: 'test'
+      req.query = {
+        q: 'test'
       };
 
-      function search(q, searchParams, next) {
+      function search (q, searchParams, next) {
         expect(q).to.equal('test');
         next(null, {
           documents: [{
@@ -337,7 +366,7 @@ describe('CRUD methods on ORM objects', function () {
             id: 5
           }]
         });
-      };
+      }
 
       bookshelfMiddleware.search({search: search})
       (req, res, function(err) {
@@ -347,35 +376,6 @@ describe('CRUD methods on ORM objects', function () {
       });
     });
   });
-
-  function resetTable(done) {
-    knex.schema.dropTableIfExists('authors')
-    .exec(function () {
-      knex.schema.createTable('authors', defineTable)
-      .exec(populate.bind(null, done));
-    });
-  }
-
-  function defineTable(table) {
-    table.engine('InnoDB');
-    table.timestamps();
-    table.charset('utf8');
-    authorSchema.build(table);
-  }
-
-  function populate(done) {
-    database.Author.forge().save({
-      long_name: 'George Abitbol',
-      short_name: 'G.A.',
-      origin: 'L\'homme le plus classe du monde'
-    }).exec(function () {
-      database.Author.forge().save({
-        long_name: 'George Abitbol2',
-        short_name: 'G.A.2',
-        origin: 'L\'homme le plus classe du monde2'
-      }).exec(done);
-    });
-  }
 });
 
 describe('req and res formatters', function() {
@@ -439,7 +439,7 @@ describe('req and res formatters', function() {
     });
   });
 
-    it('should work with deep', function () {
+  it('should work with deep', function () {
     var input = {
       where:{
         ar: [
@@ -468,7 +468,10 @@ describe('req and res formatters', function() {
       bookshelfMiddleware.formatFindAllOptions()(input, {}, function() {
         expect(input).to.deep.equal({
           options: {
-            sortBy: 'id', sortDirection: 'desc', limit:20, offset:0,
+            sortBy: 'id',
+            sortDirection: 'desc',
+            limit:20,
+            offset:0,
             whereIn: {}
           },
           where: {}
