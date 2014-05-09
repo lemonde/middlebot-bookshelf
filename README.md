@@ -8,7 +8,7 @@ Collection of bookshelf middlewares.
 ## Install
 
 ```
-npm install middlebot-bookshelf
+npm install https://github.com/lemonde/middlebot-bookshelf.git
 ```
 
 ## Usage
