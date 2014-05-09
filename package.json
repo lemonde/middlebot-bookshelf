@@ -1,13 +1,17 @@
 {
-  "name": "bookshelf-middlewares",
-  "description": "middleman middlewares for bookshelf models",
+  "name": "middlebot-bookshelf",
+  "description": "Collection of bookshelf middlewares.",
   "version": "0.1.0",
+  "keywords": [
+    "middlebot",
+    "bookshelf"
+  ],
   "scripts": {
-    "test": "mocha test/ --recursive"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/lemonde/bookshelf-middlewares.git"
+    "url": "git://github.com/lemonde/middlebot-bookshelf.git"
   },
   "author": "Yannick Dominguez <yannick.dominguez@gmail.com>",
   "main": "index.js",
