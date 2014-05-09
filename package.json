@@ -13,8 +13,9 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "lodash": "~2.4.1",
-    "underscore.string": "~2.3.3"
+    "format-keys": "^0.1.0",
+    "lodash": "^2.4.1",
+    "underscore.string": "^2.3.3"
   },
   "devDependencies": {
     "chai": "~1.7.2",
