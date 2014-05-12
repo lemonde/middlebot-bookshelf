@@ -26,6 +26,7 @@ Test if a row doesn’t exist (unicity).
 - `Model` model
 - `string|string[]|function` where
 - If a string or an array of string is provided, use `req.body` to find key. The function have `req` and `res` as arguments and must return a `where` expression.
+- `boolean` strict if true, an error is returned is a where key is missing from the body
 - `Error` error
 
 ### Example
@@ -48,6 +49,7 @@ Test if a row exists.
 - `Model` model
 - `string|string[]|function` where
 - If a string or an array of string is provided, use `req.body` to find key. The function have `req` and `res` as arguments and must return a `where` expression.
+- `boolean` strict if true, an error is returned is a where key is missing from the body
 - `Error` error
 
 ### Example

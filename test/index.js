@@ -441,6 +441,29 @@ describe('CRUD methods on ORM objects', function () {
       });
     });
 
+    it('should return an error if keys are missing when strict', function (done) {
+      bookshelfMiddleware.checkExist({
+        model: Author,
+        where: 'missing_key',
+        error: 'missing key'})
+      (req, {}, function (err) {
+        expect(err).to.eql('missing key');
+        done();
+      });
+    });
+
+    it('should not return an error if keys are missing when not strict', function (done) {
+      bookshelfMiddleware.checkExist({
+        model: Author,
+        strict: false,
+        where: 'missing_key',
+        error: 'missing key'})
+      (req, {}, function (err) {
+        expect(err).to.be.null;
+        done();
+      });
+    });
+
     it ('should do nothing if the author exists', function (done) {
       req.body = {
         id: 1
@@ -469,6 +492,29 @@ describe('CRUD methods on ORM objects', function () {
         error:'has author'})
       (req, {}, function (err) {
         expect(err).to.eql('has author');
+        done();
+      });
+    });
+
+    it('should return an error if keys are missing when strict', function (done) {
+      bookshelfMiddleware.checkNotExist({
+        model: Author,
+        where: 'missing_key',
+        error: 'missing key'})
+      (req, {}, function (err) {
+        expect(err).to.eql('missing key');
+        done();
+      });
+    });
+
+    it('should not return an error if keys are missing when not strict', function (done) {
+      bookshelfMiddleware.checkNotExist({
+        model: Author,
+        strict: false,
+        where: 'missing_key',
+        error: 'missing key'})
+      (req, {}, function (err) {
+        expect(err).to.be.null;
         done();
       });
     });
