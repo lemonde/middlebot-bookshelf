@@ -7,6 +7,7 @@ var _ = require('lodash');
  */
 
 exports.create = require('./lib/create');
+exports.update = require('./lib/update');
 exports.destroy = require('./lib/destroy');
 exports.search = require('./lib/search');
 exports.find = require('./lib/find');
