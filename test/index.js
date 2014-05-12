@@ -399,5 +399,70 @@ describe('CRUD methods on ORM objects', function () {
       });
     });
   });
+
+  describe('#checkExist', function() {
+    it('should throw an error if the author doesn\'t exists', function (done) {
+      req.body = {
+        long_name: 'George'
+      };
+
+      bookshelfMiddleware.checkExist({
+        model: Author,
+        where:'long_name',
+        error:'no author'})
+      (req, {}, function (err) {
+        expect(err).to.eql('no author');
+        done();
+      });
+    });
+
+    it ('should do nothing if the author exists', function (done) {
+      req.body = {
+        id: 1
+      };
+
+      bookshelfMiddleware.checkExist({
+        model: Author,
+        where:'id',
+        error:'no author'})
+      (req, {}, function (err) {
+        expect(err).to.be.undefined;
+        done();
+      });
+    });
+  });
+
+  describe('#checkNotExist', function() {
+    it('should throw an error if the author exists', function (done) {
+      req.body = {
+        id: 1
+      };
+
+      bookshelfMiddleware.checkNotExist({
+        model: Author,
+        where:'id',
+        error:'has author'})
+      (req, {}, function (err) {
+        expect(err).to.eql('has author');
+        done();
+      });
+    });
+
+    it ('should do nothing if the author don\t exists', function (done) {
+      req.body = {
+        id: 10
+      };
+
+      bookshelfMiddleware.checkNotExist({
+        model: Author,
+        where:'id',
+        error:'has author'})
+      (req, {}, function (err) {
+        expect(err).to.be.undefined;
+        done();
+      });
+    });
+  });
+
 });
 

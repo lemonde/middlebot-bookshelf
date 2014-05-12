@@ -17,21 +17,53 @@ npm install https://github.com/lemonde/middlebot-bookshelf.git
 
 Resource methods, make operation in the database.
 
-### snakeCaseKeys, camelizeKeys
+### middelbotBookshelf.checkNotExist(options)
 
-Generic formatter to format an object on req.
+Test if a row doesn’t exist (unicity).
+
+### Options
+
+- `Model` model
+- `string|string[]|function` where
+- If a string or an array of string is provided, use `req.body` to find key. The function have `req` and `res` as arguments and must return a `where` expression.
+- `Error` error
+
+### Example
 
 ```js
-app.use(snakeCaseKeys({ key: 'query' })); // Will snakeCasify "req.query" object keys.
+app.use(middelbotBookshelf.checkNotExist({
+    model: Author,
+    where: 'userId',
+    error: new Error('An author associated to this author already exist.')
+  });
+);
 ```
 
-### formatFindOptions, formatFindAllOptions
+### middelbotBookshelf.checkExist(options)
 
-Format req.query into two separated object, `req.where` and `req.options`. These object are used in `find` and `findAll` middlewares.
+Test if a row exists.
 
-### formatBackboneModel, formatBackboneCollection
+### Options
 
-Generic formatters to transform backbone model and backbone collection to simple object.
+- `Model` model
+- `string|string[]|function` where
+- If a string or an array of string is provided, use `req.body` to find key. The function have `req` and `res` as arguments and must return a `where` expression.
+- `Error` error
+
+### Example
+
+```js
+app.use(middelbotBookshelf.checkExist({
+    model: Author,
+    keys: function (req, res) {
+      return {
+        id: req.query.id,
+      };
+    },
+    error: new Error('Author doesn\'t exist.')
+  });
+);
+```
 
 ## License
 
