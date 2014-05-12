@@ -302,7 +302,7 @@ describe('CRUD methods on ORM objects', function () {
       (req, res, function (err) {
         if (err) return done(err);
         expect(res.body).to.exists;
-        expect(res.body.attributes.long_name).to.equal('Georges Abitbol');
+        expect(res.body.longName).to.equal('Georges Abitbol');
 
         req.options = {
           sortBy: 'id',
