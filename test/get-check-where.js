@@ -8,10 +8,10 @@ var getWhere = require('../lib/get-check-where');
 describe('#getCheckWhere', function () {
   it('should return a where with a string key', function () {
     expect(getWhere(
-      'test',
-      {body: {test: 'value'}},
+      'test_key',
+      {body: {testKey: 'value'}},
       {}
-    )).to.eql({test: 'value'});
+    )).to.eql({test_key: 'value'});
   });
 
   it('should return a where with a function key', function() {
@@ -28,13 +28,13 @@ describe('#getCheckWhere', function () {
 
   it('should return a where with an array of string key', function () {
     expect(getWhere(
-      ['test', 'test2'],
+      ['test_key', 'test_key2'],
       {body: {
-        test: 'value',
-        test2: 'value2'
+        testKey: 'value',
+        testKey2: 'value2'
         }
       },
       {}
-    )).to.eql({test: 'value', test2: 'value2'});
+    )).to.eql({test_key: 'value', test_key2: 'value2'});
   });
 });
