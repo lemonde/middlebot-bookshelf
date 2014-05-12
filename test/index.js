@@ -93,7 +93,7 @@ describe('CRUD methods on ORM objects', function () {
     });
 
     it('should return null when an object is not found', function (done) {
-      req.query = {id: 10};
+      req.query = {id: 2993};
 
       bookshelfMiddleware.find({model: Author})
       (req, res, function (err) {
