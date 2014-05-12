@@ -319,6 +319,31 @@ describe('CRUD methods on ORM objects', function () {
     });
   });
 
+  describe('#update', function () {
+    it('should update an author', function (done) {
+      req.body = {
+        longName: 'Classe man, top of the pop'
+      }
+      req.query = {id: 1};
+
+      bookshelfMiddleware.update({model: Author})
+      (req, res, function (err) {
+        expect(res.body.longName).to.eql('Classe man, top of the pop');
+        done();
+      });
+    });
+
+    it('should return an error if the author to update is not found', function(done) {
+      req.query = {id: 10};
+
+      bookshelfMiddleware.update({model: Author, error:'no author'})
+      (req, res, function (err) {
+        expect(err).to.eql('no author');
+        done();
+      });
+    });
+  });
+
   describe('#destroy', function() {
     it('should destroy an author', function (done) {
       req = {
