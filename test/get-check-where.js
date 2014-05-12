@@ -9,7 +9,7 @@ describe('#getCheckWhere', function () {
   it('should return a where with a string key', function () {
     expect(getWhere(
       'test_key',
-      {body: {testKey: 'value'}},
+      {body: {test_key: 'value'}},
       {}
     )).to.eql({test_key: 'value'});
   });
@@ -30,8 +30,8 @@ describe('#getCheckWhere', function () {
     expect(getWhere(
       ['test_key', 'test_key2'],
       {body: {
-        testKey: 'value',
-        testKey2: 'value2'
+        test_key: 'value',
+        test_key2: 'value2'
         }
       },
       {}
