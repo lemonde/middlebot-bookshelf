@@ -17,10 +17,6 @@ npm install https://github.com/lemonde/middlebot-bookshelf.git
 
 Resource methods, make operation in the database.
 
-### checkNotExist, checkExist
-
-Check wheter a row don’t exists/exists
-
 ### middelbotBookshelf.checkNotExist(options)
 
 Test if a row doesn’t exist (unicity).
@@ -28,7 +24,7 @@ Test if a row doesn’t exist (unicity).
 ### Options
 
 - `Model` model
-- `string|string[]|function` keys
+- `string|string[]|function` where
 - If a string or an array of string is provided, use `req.body` to find key. The function have `req` and `res` as arguments and must return a `where` expression.
 - `Error` error
 
@@ -37,8 +33,8 @@ Test if a row doesn’t exist (unicity).
 ```js
 app.use(middelbotBookshelf.checkNotExist({
     model: Author,
-    keys: ‘userId’,
-    error: new Error(‘An author associated to this author already exist.’)
+    where: 'userId',
+    error: new Error('An author associated to this author already exist.')
   });
 );
 ```
@@ -50,7 +46,7 @@ Test if a row exists.
 ### Options
 
 - `Model` model
-- `string|string[]|function` keys
+- `string|string[]|function` where
 - If a string or an array of string is provided, use `req.body` to find key. The function have `req` and `res` as arguments and must return a `where` expression.
 - `Error` error
 
@@ -64,7 +60,7 @@ app.use(middelbotBookshelf.checkExist({
         id: req.query.id,
       };
     },
-    error: new Error(‘Author doesn\’t exist.’)
+    error: new Error('Author doesn\'t exist.')
   });
 );
 ```

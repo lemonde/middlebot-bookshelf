@@ -408,7 +408,7 @@ describe('CRUD methods on ORM objects', function () {
 
       bookshelfMiddleware.checkExist({
         model: Author,
-        keys:'long_name',
+        where:'long_name',
         error:'no author'})
       (req, {}, function (err) {
         expect(err).to.eql('no author');
@@ -423,7 +423,7 @@ describe('CRUD methods on ORM objects', function () {
 
       bookshelfMiddleware.checkExist({
         model: Author,
-        keys:'id',
+        where:'id',
         error:'no author'})
       (req, {}, function (err) {
         expect(err).to.be.undefined;
@@ -440,7 +440,7 @@ describe('CRUD methods on ORM objects', function () {
 
       bookshelfMiddleware.checkNotExist({
         model: Author,
-        keys:'id',
+        where:'id',
         error:'has author'})
       (req, {}, function (err) {
         expect(err).to.eql('has author');
@@ -455,7 +455,7 @@ describe('CRUD methods on ORM objects', function () {
 
       bookshelfMiddleware.checkNotExist({
         model: Author,
-        keys:'id',
+        where:'id',
         error:'has author'})
       (req, {}, function (err) {
         expect(err).to.be.undefined;
