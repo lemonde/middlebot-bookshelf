@@ -3,17 +3,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 
-var Bookshelf = require('bookshelf');
-var bookshelf = Bookshelf.initialize({
-  client: 'sqlite',
-  connection: {
-    filename: ':memory:'
-  },
-  pool: {
-    max: 1
-  }
-});
-
+var bookshelf = require('bookshelf').initialize({ client: 'sqlite' });
 var backboneFormatter = require('../../lib/formatters/backbone');
 
 describe('#formatBackboneModel', function () {
