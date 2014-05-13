@@ -30,6 +30,16 @@ describe('checkExist middleware', function () {
       });
     });
 
+    it('should support both camelCase and snakeCase', function (done) {
+      req.body = { long_name: 'George Abitbol' };
+      app.use(checkExistMiddleware({
+        model: db.Author,
+        where: 'longName',
+        error: 'no author'
+      }));
+      app.handle('default', req, res, done);
+    });
+
     it('should return an error if keys are missing when strict', function (done) {
       req.body = { longName: 'George' };
       app.use(checkExistMiddleware({
