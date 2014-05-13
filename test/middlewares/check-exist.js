@@ -57,6 +57,20 @@ describe('checkExist middleware', function () {
       });
     });
 
+    it('should not return an error if keys are missing when not strict (null value)', function (done) {
+      req.body = { id: null };
+      app.use(checkExistMiddleware({
+        model: db.Author,
+        strict: false,
+        where: 'id',
+        error: 'missing key'
+      }));
+      app.handle('default', req, res, function (err) {
+        expect(err).to.be.null;
+        done();
+      });
+    });
+
     it('should do nothing if the author exists', function (done) {
       req.body = { id: 1 };
       app.use(checkExistMiddleware({
