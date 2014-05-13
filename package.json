@@ -7,7 +7,7 @@
     "bookshelf"
   ],
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --recursive"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
   "devDependencies": {
     "bookshelf": "^0.6.10",
     "chai": "^1.9.1",
+    "middlebot": "^0.3.1",
     "mocha": "^1.18.2",
     "sqlite3": "^2.2.3"
   }

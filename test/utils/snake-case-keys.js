@@ -3,7 +3,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 
-var snakeCaseKeys = require('../lib/snake-case-keys');
+var snakeCaseKeys = require('../../lib/utils/snake-case-keys');
 
 describe('#snakeCaseKeys', function() {
   it('should convert camel-case keys to snake case', function() {

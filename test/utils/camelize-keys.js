@@ -3,7 +3,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 
-var camelizeKeys = require('../lib/camelize-keys');
+var camelizeKeys = require('../../lib/utils/camelize-keys');
 
 describe('#camelizeKeys', function () {
   it('should camelize all keys', function () {
