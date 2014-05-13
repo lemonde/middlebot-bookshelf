@@ -14,7 +14,7 @@ describe('Bookshelf options formatter', function () {
   });
 
   it('should format sortBy', function () {
-    expect(bkOptsFormatter(['sortBy'], { sortBy: 'bigTest' }))
+    expect(bkOptsFormatter(['sortBy'], { sortBy: 'bigTest', foo: 'bar' }))
     .to.eql({ sortBy: 'big_test' });
   });
 });
