@@ -13,7 +13,7 @@ npm install https://github.com/lemonde/middlebot-bookshelf.git
 
 ## Usage
 
-### create, destroy, search, find, findAll
+### create, destroy, find, findAll
 
 Resource methods, make operation in the database.
 
