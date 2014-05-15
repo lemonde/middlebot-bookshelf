@@ -17,15 +17,29 @@ describe('checkExist middleware', function () {
   });
 
   describe('#checkExist', function () {
-    it('should throw an error if the author doesn\'t exists', function (done) {
-      req.body = { longName: 'George' };
+    it('should return an error if the author doesn\'t exists', function (done) {
+      req.body = { longName: 'Not me' };
+      app.use(checkExistMiddleware({
+        model: db.Author,
+        where: 'longName'
+      }));
+      app.handle('default', req, res, function (err) {
+        expect(err).to.be.instanceOf(Error);
+        expect(err).to.have.property('message', 'Relation "authors" doesn\'t exist.');
+        expect(err).to.have.property('statusCode', 400);
+        done();
+      });
+    });
+
+    it('should not return an error if author exists', function (done) {
+      req.body = { longName: 'George Abitbol' };
       app.use(checkExistMiddleware({
         model: db.Author,
         where: 'longName',
         error: 'no author'
       }));
       app.handle('default', req, res, function (err) {
-        expect(err).to.eql('no author');
+        expect(err).to.not.exists;
         done();
       });
     });
@@ -37,110 +51,164 @@ describe('checkExist middleware', function () {
         where: 'longName',
         error: 'no author'
       }));
-      app.handle('default', req, res, done);
-    });
-
-    it('should return an error if keys are missing when strict', function (done) {
-      req.body = { longName: 'George' };
-      app.use(checkExistMiddleware({
-        model: db.Author,
-        where: 'missingKey',
-        error: 'missing key'
-      }));
       app.handle('default', req, res, function (err) {
-        expect(err).to.eql('missing key');
+        expect(err).to.not.exists;
         done();
       });
     });
 
-    it('should not return an error if keys are missing when not strict', function (done) {
-      req.body = { longName: 'George' };
-      app.use(checkExistMiddleware({
-        model: db.Author,
-        strict: false,
-        where: 'missingKey',
-        error: 'missing key'
-      }));
-      app.handle('default', req, res, function (err) {
-        expect(err).to.be.null;
-        done();
+    describe('strict mode', function () {
+      it('should return an error if one of the key is undefined', function (done) {
+        req.body = { longName: 'George' };
+          app.use(checkExistMiddleware({
+          model: db.Author,
+          where: ['id', 'longName']
+        }));
+        app.handle('default', req, res, function (err) {
+          expect(err).to.be.instanceOf(Error);
+          expect(err).to.have.property('message', 'Properties are missing ["id"].');
+          expect(err).to.have.property('statusCode', 400);
+          done();
+        });
+      });
+
+      it('should return an error if one of the key is null', function (done) {
+        req.body = { id: null, longName: 'George' };
+          app.use(checkExistMiddleware({
+          model: db.Author,
+          where: ['id', 'longName']
+        }));
+        app.handle('default', req, res, function (err) {
+          expect(err).to.be.instanceOf(Error);
+          expect(err).to.have.property('message', 'Properties are missing ["id"].');
+          expect(err).to.have.property('statusCode', 400);
+          done();
+        });
       });
     });
 
-    it('should not return an error if keys are missing when not strict (null value)', function (done) {
-      req.body = { id: null };
-      app.use(checkExistMiddleware({
-        model: db.Author,
-        strict: false,
-        where: 'id',
-        error: 'missing key'
-      }));
-      app.handle('default', req, res, function (err) {
-        expect(err).to.be.null;
-        done();
+    describe('non strict mode', function () {
+      it('should not return an error if one of the key is undefined', function (done) {
+        req.body = { longName: 'George' };
+          app.use(checkExistMiddleware({
+          model: db.Author,
+          where: ['id', 'longName']
+        }));
+        app.handle('default', req, res, function (err) {
+          expect(err).to.not.exists;
+          done();
+        });
       });
-    });
 
-    it('should do nothing if the author exists', function (done) {
-      req.body = { id: 1 };
-      app.use(checkExistMiddleware({
-        model: db.Author,
-        strict: false,
-        where: '1',
-        error: 'error'
-      }));
-      app.handle('default', req, res, done);
+      it('should not return an error if one of the key is null', function (done) {
+        req.body = { id: null, longName: 'George' };
+          app.use(checkExistMiddleware({
+          model: db.Author,
+          where: ['id', 'longName']
+        }));
+        app.handle('default', req, res, function (err) {
+          expect(err).to.not.exists;
+          done();
+        });
+      });
     });
   });
 
   describe('#checkNotExist', function () {
-    it('should throw an error if the author exists', function (done) {
-      req.body = { id: 1 };
+    it('should not return an error if the author doesn\'t exists', function (done) {
+      req.body = { longName: 'Not me' };
       app.use(checkNotExistMiddleware({
         model: db.Author,
-        where:'id',
-        error:'has author'
+        where: 'longName'
       }));
       app.handle('default', req, res, function (err) {
-        expect(err).to.eql('has author');
+        expect(err).to.not.exists;
         done();
       });
     });
 
-    it('should return an error if keys are missing when strict', function (done) {
+    it('should return an error if author exists', function (done) {
+      req.body = { longName: 'George Abitbol' };
       app.use(checkNotExistMiddleware({
         model: db.Author,
-        where: 'missing_key',
-        error: 'missing key'
+        where: 'longName'
       }));
       app.handle('default', req, res, function (err) {
-        expect(err).to.eql('missing key');
+        expect(err).to.be.instanceOf(Error);
+        expect(err).to.have.property('message', 'Relation "authors" already exists.');
+        expect(err).to.have.property('statusCode', 400);
         done();
       });
     });
 
-    it('should not return an error if keys are missing when not strict', function (done) {
+    it('should support both camelCase and snakeCase', function (done) {
+      req.body = { long_name: 'George Abitbol' };
       app.use(checkNotExistMiddleware({
         model: db.Author,
-        strict: false,
-        where: 'missing_key',
-        error: 'missing key'
+        where: 'longName'
       }));
       app.handle('default', req, res, function (err) {
-        expect(err).to.be.null;
+        expect(err).to.be.instanceOf(Error);
+        expect(err).to.have.property('message', 'Relation "authors" already exists.');
+        expect(err).to.have.property('statusCode', 400);
         done();
       });
     });
 
-    it ('should do nothing if the author don\t exists', function (done) {
-      req.body = { id: 203 };
-      app.use(checkNotExistMiddleware({
-        model: db.Author,
-        strict: false,
-        where: 'missing_key',
-        error: 'missing key'
-      }));
-      app.handle('default', req, res, done);
+    describe('strict mode', function () {
+      it('should return an error if one of the key is undefined', function (done) {
+        req.body = { longName: 'George' };
+          app.use(checkExistMiddleware({
+          model: db.Author,
+          where: ['id', 'longName']
+        }));
+        app.handle('default', req, res, function (err) {
+          expect(err).to.be.instanceOf(Error);
+          expect(err).to.have.property('message', 'Properties are missing ["id"].');
+          expect(err).to.have.property('statusCode', 400);
+          done();
+        });
+      });
+
+      it('should return an error if one of the key is null', function (done) {
+        req.body = { id: null, longName: 'George' };
+          app.use(checkExistMiddleware({
+          model: db.Author,
+          where: ['id', 'longName']
+        }));
+        app.handle('default', req, res, function (err) {
+          expect(err).to.be.instanceOf(Error);
+          expect(err).to.have.property('message', 'Properties are missing ["id"].');
+          expect(err).to.have.property('statusCode', 400);
+          done();
+        });
+      });
+    });
+
+    describe('non strict mode', function () {
+      it('should not return an error if one of the key is undefined', function (done) {
+        req.body = { longName: 'George' };
+          app.use(checkNotExistMiddleware({
+          model: db.Author,
+          where: ['id', 'longName']
+        }));
+        app.handle('default', req, res, function (err) {
+          expect(err).to.not.exists;
+          done();
+        });
+      });
+
+      it('should not return an error if one of the key is null', function (done) {
+        req.body = { id: null, longName: 'George' };
+          app.use(checkNotExistMiddleware({
+          model: db.Author,
+          where: ['id', 'longName']
+        }));
+        app.handle('default', req, res, function (err) {
+          expect(err).to.not.exists;
+          done();
+        });
+      });
     });
   });
 });

@@ -29,7 +29,9 @@ describe('update middleware', function () {
     req.params = { id: 10 };
     app.use(updateMiddleware({ model: db.Author, error: new Error('no author') }));
     app.handle('default', req, res, function (err) {
-      expect(err).to.have.property('message', 'no author');
+      expect(err).to.be.instanceOf(Error);
+      expect(err).to.have.property('message', 'Author not found.');
+      expect(err).to.have.property('statusCode', 400);
       done();
     });
   });
