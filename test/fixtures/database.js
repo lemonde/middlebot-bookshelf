@@ -23,6 +23,15 @@ var Author = bookshelf.Model.extend({
 function resetTable(done) {
   knex.schema.dropTableIfExists('authors')
   .then(function () {
+    return knex.schema.dropTableIfExists('users')
+  })
+  .then(function () {
+    return knex.schema.createTable('users', function (table) {
+      table.increments('id').primary();
+      table.string('first_name');
+    });
+  })
+  .then(function () {
     return knex.schema.createTable('authors', function (table) {
       table.engine('InnoDB');
       table.timestamps();
@@ -31,6 +40,12 @@ function resetTable(done) {
       table.string('long_name');
       table.string('short_name');
       table.string('origin');
+      table.integer('user_id');
+    });
+  })
+  .then(function () {
+    return User.forge().save({
+      first_name: 'John'
     });
   })
   .then(function () {
@@ -44,24 +59,11 @@ function resetTable(done) {
     return Author.forge().save({
       long_name: 'George Abitbol2',
       short_name: 'G.A.2',
-      origin: 'L\'homme le plus classe du monde2'
+      origin: 'L\'homme le plus classe du monde2',
+      user_id: 1
     });
   })
-  .exec(function () {
-    knex.schema.dropTableIfExists('users')
-    .then(function () {
-      return knex.schema.createTable('users', function (table) {
-        table.increments('id').primary();
-        table.string('email').notNullable().unique();
-        table.string('password', 60).notNullable();
-        table.string('first_name');
-        table.string('last_name');
-        table.integer('current_role_id').index();
-        table.integer('current_section_id').index();
-      });
-    })
-    .exec(done);
-  });
+  .exec(done);
 }
 
 exports.User = User;

@@ -25,8 +25,8 @@
   "devDependencies": {
     "bookshelf": "^0.6.10",
     "chai": "^1.9.1",
-    "middlebot": "^0.3.1",
     "mocha": "^1.18.2",
-    "sqlite3": "^2.2.3"
+    "sqlite3": "^2.2.3",
+    "supertest": "^0.12.1"
   }
 }

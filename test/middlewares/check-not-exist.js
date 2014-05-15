@@ -1,30 +1,30 @@
 var http = require('http');
 var request = require('supertest');
-var checkExist = require('../../index').checkExist;
+var checkNotExist = require('../../index').checkNotExist;
 var db = require('../fixtures/database');
 
-describe('checkExist middleware', function () {
+describe('checkNotExist middleware', function () {
   beforeEach(db.reset);
 
-  it('should return an error if the author doesn\'t exist', function (done) {
-    var server = createServer({
-      model: db.Author,
-      where: 'longName'
-    }, {
-      longName: 'not me'
-    });
-
-    request(server)
-    .get('/')
-    .expect(400, 'Relation "authors" doesn\'t exist.', done);
-  });
-
-  it('should not return an error if author exists', function (done) {
+  it('should return an error if the author exists', function (done) {
     var server = createServer({
       model: db.Author,
       where: 'longName'
     }, {
       longName: 'George Abitbol'
+    });
+
+    request(server)
+    .get('/')
+    .expect(400, 'Relation "authors" already exists.', done);
+  });
+
+  it('should not return an error if author doesn\'t exist', function (done) {
+    var server = createServer({
+      model: db.Author,
+      where: 'longName'
+    }, {
+      longName: 'not me'
     });
 
     request(server)
@@ -37,7 +37,7 @@ describe('checkExist middleware', function () {
       model: db.Author,
       where: 'longName'
     }, {
-      long_name: 'George Abitbol'
+      long_name: 'not me'
     });
 
     request(server)
@@ -109,11 +109,11 @@ describe('checkExist middleware', function () {
 });
 
 function createServer(opts, body){
-  var _checkExist = checkExist(opts);
+  var _checkNotExist = checkNotExist(opts);
 
   return http.createServer(function (req, res) {
     req.body = body;
-    _checkExist(req, res, function (err) {
+    _checkNotExist(req, res, function (err) {
       res.statusCode = err ? (err.statusCode || 500) : res.statusCode;
       res.end(err ? err.message : JSON.stringify(res.body));
     });
