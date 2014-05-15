@@ -27,15 +27,13 @@ Test if a row doesn’t exist (unicity).
 - `string|string[]|function` where
 - If a string or an array of string is provided, use `req.body` to find key. The function have `req` and `res` as arguments and must return a `where` expression.
 - `boolean` strict if true, an error is returned is a where key is missing from the body
-- `Error` error
 
 ### Example
 
 ```js
 app.use(middelbotBookshelf.checkNotExist({
     model: Author,
-    where: 'userId',
-    error: new Error('An author associated to this author already exist.')
+    where: 'userId'
   });
 );
 ```
@@ -50,7 +48,6 @@ Test if a row exists.
 - `string|string[]|function` where
 - If a string or an array of string is provided, use `req.body` to find key. The function have `req` and `res` as arguments and must return a `where` expression.
 - `boolean` strict if true, an error is returned is a where key is missing from the body
-- `Error` error
 
 ### Example
 

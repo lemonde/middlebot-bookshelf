@@ -21,11 +21,12 @@ describe('checkExist middleware', function () {
       req.body = { longName: 'Not me' };
       app.use(checkExistMiddleware({
         model: db.Author,
-        where: 'longName',
-        error: 'no author'
+        where: 'longName'
       }));
       app.handle('default', req, res, function (err) {
-        expect(err).to.eql('no author');
+        expect(err).to.be.instanceOf(Error);
+        expect(err).to.have.property('message', 'Relation "authors" doesn\'t exist.');
+        expect(err).to.have.property('statusCode', 400);
         done();
       });
     });
@@ -61,11 +62,12 @@ describe('checkExist middleware', function () {
         req.body = { longName: 'George' };
           app.use(checkExistMiddleware({
           model: db.Author,
-          where: ['id', 'longName'],
-          error: 'missing key'
+          where: ['id', 'longName']
         }));
         app.handle('default', req, res, function (err) {
-          expect(err).to.eql('missing key');
+          expect(err).to.be.instanceOf(Error);
+          expect(err).to.have.property('message', 'Properties are missing ["id"].');
+          expect(err).to.have.property('statusCode', 400);
           done();
         });
       });
@@ -74,11 +76,12 @@ describe('checkExist middleware', function () {
         req.body = { id: null, longName: 'George' };
           app.use(checkExistMiddleware({
           model: db.Author,
-          where: ['id', 'longName'],
-          error: 'missing key'
+          where: ['id', 'longName']
         }));
         app.handle('default', req, res, function (err) {
-          expect(err).to.eql('missing key');
+          expect(err).to.be.instanceOf(Error);
+          expect(err).to.have.property('message', 'Properties are missing ["id"].');
+          expect(err).to.have.property('statusCode', 400);
           done();
         });
       });
@@ -89,8 +92,7 @@ describe('checkExist middleware', function () {
         req.body = { longName: 'George' };
           app.use(checkExistMiddleware({
           model: db.Author,
-          where: ['id', 'longName'],
-          error: 'missing key'
+          where: ['id', 'longName']
         }));
         app.handle('default', req, res, function (err) {
           expect(err).to.not.exists;
@@ -102,8 +104,7 @@ describe('checkExist middleware', function () {
         req.body = { id: null, longName: 'George' };
           app.use(checkExistMiddleware({
           model: db.Author,
-          where: ['id', 'longName'],
-          error: 'missing key'
+          where: ['id', 'longName']
         }));
         app.handle('default', req, res, function (err) {
           expect(err).to.not.exists;
@@ -118,8 +119,7 @@ describe('checkExist middleware', function () {
       req.body = { longName: 'Not me' };
       app.use(checkNotExistMiddleware({
         model: db.Author,
-        where: 'longName',
-        error: 'no author'
+        where: 'longName'
       }));
       app.handle('default', req, res, function (err) {
         expect(err).to.not.exists;
@@ -131,11 +131,12 @@ describe('checkExist middleware', function () {
       req.body = { longName: 'George Abitbol' };
       app.use(checkNotExistMiddleware({
         model: db.Author,
-        where: 'longName',
-        error: 'no author'
+        where: 'longName'
       }));
       app.handle('default', req, res, function (err) {
-        expect(err).to.equal('no author');
+        expect(err).to.be.instanceOf(Error);
+        expect(err).to.have.property('message', 'Relation "authors" already exists.');
+        expect(err).to.have.property('statusCode', 400);
         done();
       });
     });
@@ -144,11 +145,12 @@ describe('checkExist middleware', function () {
       req.body = { long_name: 'George Abitbol' };
       app.use(checkNotExistMiddleware({
         model: db.Author,
-        where: 'longName',
-        error: 'no author'
+        where: 'longName'
       }));
       app.handle('default', req, res, function (err) {
-        expect(err).to.equal('no author');
+        expect(err).to.be.instanceOf(Error);
+        expect(err).to.have.property('message', 'Relation "authors" already exists.');
+        expect(err).to.have.property('statusCode', 400);
         done();
       });
     });
@@ -156,26 +158,28 @@ describe('checkExist middleware', function () {
     describe('strict mode', function () {
       it('should return an error if one of the key is undefined', function (done) {
         req.body = { longName: 'George' };
-          app.use(checkNotExistMiddleware({
+          app.use(checkExistMiddleware({
           model: db.Author,
-          where: ['id', 'longName'],
-          error: 'missing key'
+          where: ['id', 'longName']
         }));
         app.handle('default', req, res, function (err) {
-          expect(err).to.eql('missing key');
+          expect(err).to.be.instanceOf(Error);
+          expect(err).to.have.property('message', 'Properties are missing ["id"].');
+          expect(err).to.have.property('statusCode', 400);
           done();
         });
       });
 
       it('should return an error if one of the key is null', function (done) {
         req.body = { id: null, longName: 'George' };
-          app.use(checkNotExistMiddleware({
+          app.use(checkExistMiddleware({
           model: db.Author,
-          where: ['id', 'longName'],
-          error: 'missing key'
+          where: ['id', 'longName']
         }));
         app.handle('default', req, res, function (err) {
-          expect(err).to.eql('missing key');
+          expect(err).to.be.instanceOf(Error);
+          expect(err).to.have.property('message', 'Properties are missing ["id"].');
+          expect(err).to.have.property('statusCode', 400);
           done();
         });
       });
@@ -186,8 +190,7 @@ describe('checkExist middleware', function () {
         req.body = { longName: 'George' };
           app.use(checkNotExistMiddleware({
           model: db.Author,
-          where: ['id', 'longName'],
-          error: 'missing key'
+          where: ['id', 'longName']
         }));
         app.handle('default', req, res, function (err) {
           expect(err).to.not.exists;
@@ -199,8 +202,7 @@ describe('checkExist middleware', function () {
         req.body = { id: null, longName: 'George' };
           app.use(checkNotExistMiddleware({
           model: db.Author,
-          where: ['id', 'longName'],
-          error: 'missing key'
+          where: ['id', 'longName']
         }));
         app.handle('default', req, res, function (err) {
           expect(err).to.not.exists;
