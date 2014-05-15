@@ -15,7 +15,7 @@ describe('destroy middleware', function () {
   });
 
   it('should destroy an author', function (done) {
-    req.query = { id: 1 };
+    req.params = { id: 1 };
     app.use(destroyMiddleware({ model: db.Author }));
     app.handle('default', req, res, function (err) {
       if (err) return done(err);
@@ -28,7 +28,7 @@ describe('destroy middleware', function () {
   });
 
   it('should not destroy if author not found', function (done) {
-    req.query = { id: 203 };
+    req.params = { id: 203 };
     app.use(destroyMiddleware({ model: db.Author }));
     app.handle('default', req, res, function (err) {
       if (err) return done(err);
