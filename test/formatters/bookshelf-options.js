@@ -8,11 +8,6 @@ describe('Bookshelf options formatter', function () {
     expect(bkOptsFormatter(['foo'], { foo: 'bar' }, { foo: 'test' })).to.eql({ foo: 'bar' });
   });
 
-  it('should format withRelated correctly', function () {
-    expect(bkOptsFormatter(['withRelated'], { withRelated: ['bigTest'] }))
-    .to.eql({ withRelated: ['big_test'] });
-  });
-
   it('should format sortBy', function () {
     expect(bkOptsFormatter(['sortBy'], { sortBy: 'bigTest', foo: 'bar' }))
     .to.eql({ sortBy: 'big_test' });
