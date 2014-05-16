@@ -45,6 +45,19 @@ describe('checkExist middleware', function () {
     .expect(200, done);
   });
 
+  it('should support where as a function', function (done) {
+    var server = createServer(checkExist({
+      model: db.Author,
+      where: function (req, res, qb) {
+        qb.where({long_name: 'George Abitbol'});
+      }
+    }));
+
+    request(server)
+    .get('/')
+    .expect(200, done);
+  });
+
   describe('strict mode', function () {
     it('should return an error if one of the key is undefined', function (done) {
       var server = createServer(checkExist({
