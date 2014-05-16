@@ -1,18 +1,15 @@
-var http = require('http');
 var request = require('supertest');
-var update = require('../../index').update;
-var db = require('../fixtures/database');
+var update = require('../../../index').update;
+var db = require('../../fixtures/database');
+var createServer = require('../../utils/http').createServer;
 
 describe('update middleware', function () {
   beforeEach(db.reset);
 
   it('should update an author', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {
-      longName: 'Classe man, top of the pop'
-    }, {}, {
-      id: 1
+    var server = createServer(update({ model: db.Author }), {
+      body: { longName: 'Classe man, top of the pop' },
+      params: { id: 1 }
     });
 
     request(server)
@@ -29,12 +26,9 @@ describe('update middleware', function () {
   });
 
   it('should return an error if the author to update is not found', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {
-      longName: 'Classe man, top of the pop'
-    }, {}, {
-      id: 10
+    var server = createServer(update({ model: db.Author }), {
+      body: { longName: 'Classe man, top of the pop' },
+      params: { id: 10 }
     });
 
     request(server)
@@ -43,14 +37,10 @@ describe('update middleware', function () {
   });
 
   it('should support withRelated', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {
-      longName: 'Classe man, top of the pop'
-    }, {
-      withRelated: 'user'
-    }, {
-      id: 2
+    var server = createServer(update({ model: db.Author }), {
+      body: { longName: 'Classe man, top of the pop' },
+      query: { withRelated: 'user' },
+      params: { id: 2 }
     });
 
     request(server)
@@ -70,18 +60,3 @@ describe('update middleware', function () {
     }, done);
   });
 });
-
-function createServer(opts, body, query, params){
-  var _update = update(opts);
-
-  return http.createServer(function (req, res) {
-    req.body = body;
-    req.query = query;
-    req.params = params;
-    _update(req, res, function (err) {
-      res.setHeader('Content-Type', 'application/json');
-      res.statusCode = err ? (err.statusCode || 500) : res.statusCode;
-      res.end(err ? err.message : JSON.stringify(res.body));
-    });
-  });
-}

@@ -1,7 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var bkOptsFormatter = require('../../lib/formatters/bookshelf-options');
+var bkOptsFormatter = require('../../../lib/formatters/bookshelf-options');
 
 describe('Bookshelf options formatter', function () {
   it('should format options', function () {

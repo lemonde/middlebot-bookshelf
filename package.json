@@ -7,7 +7,7 @@
     "bookshelf"
   ],
   "scripts": {
-    "test": "mocha --recursive"
+    "test": "mocha --recursive test/specs"
   },
   "repository": {
     "type": "git",
