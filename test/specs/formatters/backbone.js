@@ -4,7 +4,7 @@ var chai = require('chai');
 var expect = chai.expect;
 
 var bookshelf = require('bookshelf').initialize({ client: 'sqlite' });
-var backboneFormatter = require('../../lib/formatters/backbone');
+var backboneFormatter = require('../../../lib/formatters/backbone');
 
 describe('#formatBackboneModel', function () {
   it('should convert model to JSON', function () {

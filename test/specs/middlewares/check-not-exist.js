@@ -1,30 +1,30 @@
-var http = require('http');
 var request = require('supertest');
-var checkExist = require('../../index').checkExist;
-var db = require('../fixtures/database');
+var checkNotExist = require('../../../index').checkNotExist;
+var db = require('../../fixtures/database');
+var createServer = require('../../utils/http').createServer;
 
-describe('checkExist middleware', function () {
+describe('checkNotExist middleware', function () {
   beforeEach(db.reset);
 
-  it('should return an error if the author doesn\'t exist', function (done) {
-    var server = createServer({
+  it('should return an error if the author exists', function (done) {
+    var server = createServer(checkNotExist({
       model: db.Author,
       where: 'longName'
-    }, {
-      longName: 'not me'
+    }), {
+      body: { longName: 'George Abitbol' }
     });
 
     request(server)
     .get('/')
-    .expect(400, 'Relation "authors" doesn\'t exist.', done);
+    .expect(400, 'Relation "authors" already exists.', done);
   });
 
-  it('should not return an error if author exists', function (done) {
-    var server = createServer({
+  it('should not return an error if author doesn\'t exist', function (done) {
+    var server = createServer(checkNotExist({
       model: db.Author,
       where: 'longName'
-    }, {
-      longName: 'George Abitbol'
+    }), {
+      body: { longName: 'not me' }
     });
 
     request(server)
@@ -33,11 +33,11 @@ describe('checkExist middleware', function () {
   });
 
   it('should support both camelCase and snakeCase', function (done) {
-    var server = createServer({
+    var server = createServer(checkNotExist({
       model: db.Author,
       where: 'longName'
-    }, {
-      long_name: 'George Abitbol'
+    }), {
+      body: { long_name: 'not me' }
     });
 
     request(server)
@@ -47,12 +47,12 @@ describe('checkExist middleware', function () {
 
   describe('strict mode', function () {
     it('should return an error if one of the key is undefined', function (done) {
-      var server = createServer({
+      var server = createServer(checkNotExist({
         model: db.Author,
         where: ['id', 'longName'],
         strict: true
-      }, {
-        longName: 'George Abitbol'
+      }), {
+        body: { longName: 'not me' }
       });
 
       request(server)
@@ -61,13 +61,12 @@ describe('checkExist middleware', function () {
     });
 
     it('should return an error if one of the key is null', function (done) {
-      var server = createServer({
+      var server = createServer(checkNotExist({
         model: db.Author,
         where: ['id', 'longName'],
         strict: true
-      }, {
-        id: null,
-        longName: 'George Abitbol'
+      }), {
+        body: { id: null, longName: 'not me' }
       });
 
       request(server)
@@ -78,12 +77,12 @@ describe('checkExist middleware', function () {
 
   describe('non strict mode', function () {
     it('should not return an error if one of the key is undefined', function (done) {
-      var server = createServer({
-        model: db.Author,
+      var server = createServer(checkNotExist({
+         model: db.Author,
         where: ['id', 'longName'],
         strict: false
-      }, {
-        longName: 'George Abitbol'
+      }), {
+        body: { longName: 'George Abitbol' }
       });
 
       request(server)
@@ -92,13 +91,12 @@ describe('checkExist middleware', function () {
     });
 
     it('should not return an error if one of the key is null', function (done) {
-      var server = createServer({
-        model: db.Author,
+      var server = createServer(checkNotExist({
+         model: db.Author,
         where: ['id', 'longName'],
         strict: false
-      }, {
-        id: null,
-        longName: 'George Abitbol'
+      }), {
+        body: { id: null, longName: 'George Abitbol' }
       });
 
       request(server)
@@ -107,15 +105,3 @@ describe('checkExist middleware', function () {
     });
   });
 });
-
-function createServer(opts, body){
-  var _checkExist = checkExist(opts);
-
-  return http.createServer(function (req, res) {
-    req.body = body;
-    _checkExist(req, res, function (err) {
-      res.statusCode = err ? (err.statusCode || 500) : res.statusCode;
-      res.end(err ? err.message : JSON.stringify(res.body));
-    });
-  });
-}

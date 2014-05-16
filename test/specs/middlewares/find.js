@@ -1,16 +1,14 @@
-var http = require('http');
 var request = require('supertest');
-var find = require('../../index').find;
-var db = require('../fixtures/database');
+var find = require('../../../index').find;
+var db = require('../../fixtures/database');
+var createServer = require('../../utils/http').createServer;
 
 describe('find middleware', function () {
   beforeEach(db.reset);
 
   it('should be possible to find an object by id', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {}, {}, {
-      id: 1
+    var server = createServer(find({ model: db.Author }), {
+      params: { id: 1 }
     });
 
     request(server)
@@ -27,10 +25,8 @@ describe('find middleware', function () {
   });
 
   it('should return null when an object is not found', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {}, {}, {
-      id: 2993
+    var server = createServer(find({ model: db.Author }), {
+      params: { id: 2994 }
     });
 
     request(server)
@@ -39,12 +35,9 @@ describe('find middleware', function () {
   });
 
   it('should be possible to add "withRelated" option in where', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {}, {
-      withRelated: 'user'
-    }, {
-      id: 2
+    var server = createServer(find({ model: db.Author }), {
+      query: { withRelated: 'user' },
+      params: { id: 2 }
     });
 
     request(server)
@@ -65,11 +58,11 @@ describe('find middleware', function () {
   });
 
   it('should be possible to specify default option "withRelated"', function (done) {
-    var server = createServer({
+    var server = createServer(find({
       model: db.Author,
       withRelated: 'user'
-    }, {}, {}, {
-      id: 2
+    }), {
+      params: { id: 2 }
     });
 
     request(server)
@@ -89,18 +82,3 @@ describe('find middleware', function () {
     }, done);
   });
 });
-
-function createServer(opts, body, query, params){
-  var _find = find(opts);
-
-  return http.createServer(function (req, res) {
-    req.body = body;
-    req.query = query;
-    req.params = params;
-    _find(req, res, function (err) {
-      res.setHeader('Content-Type', 'application/json');
-      res.statusCode = err ? (err.statusCode || 500) : res.statusCode;
-      res.end(err ? err.message : JSON.stringify(res.body));
-    });
-  });
-}

@@ -1,18 +1,18 @@
-var http = require('http');
 var request = require('supertest');
 var expect = require('chai').expect;
-var create = require('../../index').create;
-var db = require('../fixtures/database');
+var create = require('../../../index').create;
+var db = require('../../fixtures/database');
+var createServer = require('../../utils/http').createServer;
 
 describe('create middleware', function () {
   beforeEach(db.reset);
 
   it('should create an author', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {
-      longName: 'Georges Abitbol',
-      shortName: 'G.A.'
+    var server = createServer(create({ model: db.Author }), {
+      body: {
+        longName: 'Georges Abitbol',
+        shortName: 'G.A.'
+      }
     });
 
     request(server)
@@ -37,14 +37,13 @@ describe('create middleware', function () {
   });
 
   it('should support withRelated', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {
-      longName: 'Georges Abitbol',
-      shortName: 'G.A.',
-      userId: 1
-    }, {
-      withRelated: 'user'
+    var server = createServer(create({ model: db.Author }), {
+      body: {
+        longName: 'Georges Abitbol',
+        shortName: 'G.A.',
+        userId: 1
+      },
+      query: { withRelated: 'user' }
     });
 
     request(server)
@@ -72,17 +71,3 @@ describe('create middleware', function () {
     });
   });
 });
-
-function createServer(opts, body, query){
-  var _create = create(opts);
-
-  return http.createServer(function (req, res) {
-    req.body = body;
-    req.query = query;
-    _create(req, res, function (err) {
-      res.setHeader('Content-Type', 'application/json');
-      res.statusCode = err ? (err.statusCode || 500) : res.statusCode;
-      res.end(err ? err.message : JSON.stringify(res.body));
-    });
-  });
-}

@@ -1,16 +1,14 @@
-var http = require('http');
 var expect = require('chai').expect;
 var request = require('supertest');
-var findAll = require('../../index').findAll;
-var db = require('../fixtures/database');
+var findAll = require('../../../index').findAll;
+var db = require('../../fixtures/database');
+var createServer = require('../../utils/http').createServer;
 
 describe('findAll middleware', function () {
   beforeEach(db.reset);
 
   it('should fetch all authors', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {}, {}, {});
+    var server = createServer(findAll({ model: db.Author }));
 
     request(server)
     .get('/')
@@ -25,11 +23,11 @@ describe('findAll middleware', function () {
   });
 
   it('should be possible to add a withRelated in where', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {}, {
-      id: 2,
-      withRelated: 'user'
+    var server = createServer(findAll({ model: db.Author }), {
+      query: {
+        id: 2,
+        withRelated: 'user'
+      }
     });
 
     request(server)
@@ -43,10 +41,10 @@ describe('findAll middleware', function () {
   });
 
   it('should be possible to set a limit', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {}, {
-      limit: 1
+    var server = createServer(findAll({ model: db.Author }), {
+      query: {
+        limit: 1
+      }
     });
 
     request(server)
@@ -59,10 +57,10 @@ describe('findAll middleware', function () {
   });
 
   it('should be possible to set an offset', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {}, {
-      offset: 1
+    var server = createServer(findAll({ model: db.Author }), {
+      query: {
+        offset: 1
+      }
     });
 
     request(server)
@@ -76,11 +74,11 @@ describe('findAll middleware', function () {
   });
 
   it('should be possible to set a sortBy', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {}, {
-      sortBy: 'shortName',
-      sortDirection: 'ASC'
+    var server = createServer(findAll({ model: db.Author }), {
+      query: {
+        sortBy: 'shortName',
+        sortDirection: 'ASC'
+      }
     });
 
     request(server)
@@ -93,11 +91,11 @@ describe('findAll middleware', function () {
   });
 
   it('should be possible to set a sortDirection', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {}, {
-      sortBy: 'id',
-      sortDirection: 'DESC'
+    var server = createServer(findAll({ model: db.Author }), {
+      query: {
+        sortBy: 'id',
+        sortDirection: 'DESC'
+      }
     });
 
     request(server)
@@ -110,10 +108,10 @@ describe('findAll middleware', function () {
   });
 
   it('should be possible to find multiple values', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {}, {
-      id: [1, 2]
+    var server = createServer(findAll({ model: db.Author }), {
+      query: {
+        id: [1, 2]
+      }
     });
 
     request(server)
@@ -126,10 +124,10 @@ describe('findAll middleware', function () {
   });
 
   it('should be possible to count', function (done) {
-    var server = createServer({
-      model: db.Author
-    }, {}, {
-      count: true
+    var server = createServer(findAll({ model: db.Author }), {
+      query: {
+        count: true
+      }
     });
 
     request(server)
@@ -145,21 +143,3 @@ describe('findAll middleware', function () {
     });
   });
 });
-
-function createServer(opts, body, query, params){
-  var _findAll = findAll(opts);
-
-  return http.createServer(function (req, res) {
-    req.body = body;
-    req.query = query;
-    req.params = params;
-    _findAll(req, res, function (err) {
-      res.setHeader('Content-Type', 'application/json');
-      res.statusCode = err ? (err.statusCode || 500) : res.statusCode;
-      res.end(err ? err.message : JSON.stringify({
-        body: res.body,
-        metadata: res.metadata
-      }));
-    });
-  });
-}
