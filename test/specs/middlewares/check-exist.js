@@ -51,9 +51,7 @@ describe('checkExist middleware', function () {
       where: function (req, res, qb) {
         qb.where({long_name: 'George Abitbol'});
       }
-    }), {
-      body: { long_name: 'George Abitbol' }
-    });
+    }));
 
     request(server)
     .get('/')
