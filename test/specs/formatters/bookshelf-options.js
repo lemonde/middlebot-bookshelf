@@ -12,4 +12,15 @@ describe('Bookshelf options formatter', function () {
     expect(bkOptsFormatter(['sortBy'], { sortBy: 'bigTest', foo: 'bar' }))
     .to.eql({ sortBy: 'big_test' });
   });
+
+  it('should format limit', function () {
+    expect(bkOptsFormatter(['limit'], { limit: '1'}))
+    .to.eql({ limit: 1});
+  });
+
+  it('should format offset', function () {
+    expect(bkOptsFormatter(['offset'], { offset: '1'}))
+    .to.eql({ offset: 1});
+  });
+
 });
