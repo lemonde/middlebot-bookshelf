@@ -142,4 +142,21 @@ describe('findAll middleware', function () {
       done();
     });
   });
+
+  it('should be able to omit parameters from where object', function (done) {
+    var server = createServer(findAll({ model: db.Author, omit: ['shortName'] }), {
+      query: {
+        count: true,
+        shortName: 'G.A.2'
+      }
+    });
+
+    request(server)
+    .get('/')
+    .expect(200, function (err, res) {
+      if (err) return done(err);
+      expect(res.body.body).to.length(2);
+      done();
+    });
+  })
 });
