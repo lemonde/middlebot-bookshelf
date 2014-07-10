@@ -21,7 +21,7 @@
     "i": "^0.3.2",
     "lodash": "^2.4.1",
     "nconf": "^0.6.9",
-    "node-error": "git+ssh://git@github.com:lemonde/node-error.git#v0.1.0",
+    "node-error": "git+https://git@github.com:lemonde/node-error.git#v0.1.0",
     "underscore.string": "^2.3.3"
   },
   "devDependencies": {
