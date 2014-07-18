@@ -1,0 +1,31 @@
+{
+  "name": "middlebot-bookshelf",
+  "version": "0.6.0",
+  "dependencies": {
+    "format-keys": {
+      "version": "0.1.1",
+      "from": "format-keys@^0.1.0",
+      "resolved": "https://registry.npmjs.org/format-keys/-/format-keys-0.1.1.tgz"
+    },
+    "i": {
+      "version": "0.3.2",
+      "from": "i@^0.3.2",
+      "resolved": "https://registry.npmjs.org/i/-/i-0.3.2.tgz"
+    },
+    "lodash": {
+      "version": "2.4.1",
+      "from": "lodash@^2.4.1",
+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-2.4.1.tgz"
+    },
+    "node-error": {
+      "version": "0.1.0",
+      "from": "git+ssh://git@github.com:lemonde/node-error.git#v0.1.0",
+      "resolved": "git+ssh://git@github.com:lemonde/node-error.git#e347a086d2c5f95d34712a2e4e211a8adc3e9ff8"
+    },
+    "underscore.string": {
+      "version": "2.3.3",
+      "from": "underscore.string@^2.3.3",
+      "resolved": "https://registry.npmjs.org/underscore.string/-/underscore.string-2.3.3.tgz"
+    }
+  }
+}
