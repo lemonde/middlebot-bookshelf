@@ -19,6 +19,20 @@ describe('checkExist middleware', function () {
     .expect(400, 'Relation "authors" doesn\'t exist.', done);
   });
 
+  it('should return a custom error if the author doesn\'t exist and one is provided', function (done) {
+    var server = createServer(checkExist({
+      error: new Error('custom error'),
+      model: db.Author,
+      where: 'longName'
+    }), {
+      body: { longName: 'not me' }
+    });
+
+    request(server)
+    .get('/')
+    .expect(500, 'custom error', done);
+  });
+
   it('should not return an error if author exists', function (done) {
     var server = createServer(checkExist({
       model: db.Author,

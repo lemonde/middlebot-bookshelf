@@ -36,6 +36,17 @@ describe('update middleware', function () {
     .expect(400, 'Author not found.', done);
   });
 
+  it('should return a custom error if the author to update is not found and one is provided', function (done) {
+    var server = createServer(update({ model: db.Author, error: new Error('custom error') }), {
+      body: { longName: 'Classe man, top of the pop' },
+      params: { id: 10 }
+    });
+
+    request(server)
+    .get('/')
+    .expect(500, 'custom error', done);
+  });
+
   it('should support withRelated', function (done) {
     var server = createServer(update({ model: db.Author }), {
       body: { longName: 'Classe man, top of the pop' },
