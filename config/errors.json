@@ -1,0 +1,29 @@
+{
+  "find": {
+    "not-found": {
+      "message": "%s not found.",
+      "status": 400
+    }
+  },
+  "update": {
+    "not-found": {
+      "message": "%s not found.",
+      "status": 400
+    }
+  },
+  "check-exist": {
+    "missing-properties": {
+      "message": "Properties are missing %j.",
+      "status": 400
+    },
+    "dont-exist": {
+      "message": "Relation \"%s\" doesn't exist.",
+      "status": 400
+    },
+    "already-exist": {
+      "message": "Relation \"%s\" already exists.",
+      "status": 400
+    }
+  }
+}
+
