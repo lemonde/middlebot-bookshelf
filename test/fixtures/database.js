@@ -20,10 +20,17 @@ var Author = bookshelf.Model.extend({
   }
 });
 
+var ArticleAuthor = bookshelf.Model.extend({
+  tableName: 'articles-authors'
+});
+
 function resetTable(done) {
   knex.schema.dropTableIfExists('authors')
   .then(function () {
     return knex.schema.dropTableIfExists('users')
+  })
+  .then(function () {
+    return knex.schema.dropTableIfExists('articles-authors');
   })
   .then(function () {
     return knex.schema.createTable('users', function (table) {
@@ -41,6 +48,25 @@ function resetTable(done) {
       table.string('short_name');
       table.string('origin');
       table.integer('user_id');
+    });
+  })
+  .then(function () {
+    return knex.schema.createTable('articles-authors', function (table) {
+      table.increments('id').primary();
+      table.integer('article_id').unsigned().notNullable();
+      table.integer('author_id').unsigned().notNullable();
+    });
+  })
+  .then(function () {
+    return ArticleAuthor.forge().save({
+      article_id: 1,
+      author_id: 1
+    });
+  })
+  .then(function () {
+    return ArticleAuthor.forge().save({
+      article_id: 1,
+      author_id: 2
     });
   })
   .then(function () {
@@ -68,4 +94,5 @@ function resetTable(done) {
 
 exports.User = User;
 exports.Author = Author;
+exports.ArticleAuthor = ArticleAuthor;
 exports.reset = resetTable;
