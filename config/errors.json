@@ -24,6 +24,12 @@
       "message": "Relation \"%s\" already exists.",
       "status": 400
     }
+  },
+  "where": {
+    "missing-index": {
+      "message": "There is no resource at index \"%s\"",
+      "status": 400
+    }
   }
 }
 
