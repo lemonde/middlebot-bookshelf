@@ -24,9 +24,7 @@ describe('build where', function () {
             }));
 
     app.use(function (req, res) {
-      expect(req.where).to.eql({
-        id: [1,2]
-      });
+      expect(req.query.id).to.eql([1, 2]);
       res.end('done');
     });
 
