@@ -33,6 +33,32 @@ describe('build where', function () {
     .expect(200)
     .end(done);
   });
+
+  it('should be able to return only one item', function (done) {
+
+    var app = express();
+    app.get('/articles/:articleId/authors/:authorId',
+            where({
+              model: db.ArticleAuthor,
+              where: function (req) {
+                return {article_id: req.params.articleId};
+              },
+              index: function (req) {
+                return --req.params.authorId;
+              },
+              key: 'authorId'
+            }));
+
+    app.use(function (req, res) {
+      expect(req.query.id).to.eql(2);
+      res.end('done');
+    });
+
+    request(app)
+    .get('/articles/1/authors/2')
+    .expect(200)
+    .end(done);
+  });
 });
 
 
