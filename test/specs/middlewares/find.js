@@ -91,4 +91,39 @@ describe('find middleware', function () {
       }
     }, done);
   });
+
+  it('should be posssible to filter the result after it was fetched', function (done) {
+    var server = createServer(find({
+      model: db.Author,
+      withRelated: 'user',
+      filter: function (res) {
+        return res.user;
+      }
+    }), {
+      params: { id: 2 }
+    });
+
+    request(server)
+    .get('/')
+    .expect(200, {
+      id: 1,
+      firstName: 'John'
+    }, done);
+  });
+
+  it('should be posssible to throw from the filter function', function (done) {
+    var server = createServer(find({
+      model: db.Author,
+      withRelated: 'user',
+      filter: function () {
+        throw new Error('oups');
+      }
+    }), {
+      params: { id: 2 }
+    });
+
+    request(server)
+    .get('/')
+    .expect(500, 'oups', done);
+  });
 });
