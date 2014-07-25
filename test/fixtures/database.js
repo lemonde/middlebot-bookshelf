@@ -122,3 +122,4 @@ exports.User = User;
 exports.Author = Author;
 exports.Article = Article;
 exports.reset = resetTable;
+exports.knex = knex;
