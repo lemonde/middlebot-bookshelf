@@ -10,6 +10,7 @@ exports.create = require('./lib/middlewares/create');
 exports.update = require('./lib/middlewares/update');
 exports.destroy = require('./lib/middlewares/destroy');
 exports.find = require('./lib/middlewares/find');
+exports.findRelated = require('./lib/middlewares/find-related');
 exports.findAll = require('./lib/middlewares/find-all');
 exports.checkExist = _.partialRight(require('./lib/middlewares/check-exist'), true);
 exports.checkNotExist = _.partialRight(require('./lib/middlewares/check-exist'), false);

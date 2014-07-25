@@ -20,10 +20,45 @@ var Author = bookshelf.Model.extend({
   }
 });
 
+var Article = bookshelf.Model.extend({
+  tableName: 'articles',
+  authors: function () {
+    return this.belongsToMany(Author);
+  }
+});
+
+var ArticleAuthor = bookshelf.Model.extend({
+  tableName: 'articles_authors',
+  author: function () {
+    return this.belongsTo(database.Author);
+  }
+});
+
 function resetTable(done) {
   knex.schema.dropTableIfExists('authors')
   .then(function () {
     return knex.schema.dropTableIfExists('users')
+  })
+  .then(function () {
+    return knex.schema.dropTableIfExists('articles')
+  })
+  .then(function () {
+    return knex.schema.dropTableIfExists('articles_authors')
+  })
+  .then(function () {
+    return knex.schema.createTable('articles_authors', function (table) {
+      table.increments('id').primary();
+      table.integer('article_id').unsigned().notNullable()
+      .references('id').inTable('articles').index();
+      table.integer('author_id').unsigned().notNullable()
+      .references('id').inTable('authors').index();
+    });
+  })
+  .then(function () {
+    return knex.schema.createTable('articles', function (table) {
+      table.increments('id').primary();
+      table.string('content');
+    });
   })
   .then(function () {
     return knex.schema.createTable('users', function (table) {
@@ -63,9 +98,28 @@ function resetTable(done) {
       user_id: 1
     });
   })
+  .then(function () {
+    return Article.forge().save({
+      content: 'My article'
+    });
+  })
+  .then(function () {
+    return ArticleAuthor.forge().save({
+      article_id: 1,
+      author_id: 1
+    });
+  })
+  .then(function () {
+    return ArticleAuthor.forge().save({
+      article_id: 1,
+      author_id: 2
+    });
+  })
   .exec(done);
 }
 
 exports.User = User;
 exports.Author = Author;
+exports.Article = Article;
 exports.reset = resetTable;
+exports.knex = knex;
