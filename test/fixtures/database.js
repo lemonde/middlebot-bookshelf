@@ -1,7 +1,5 @@
-'use strict';
-
-/* jshint camelcase:false */
-var knx = require('knex')({
+var Bookshelf = require('bookshelf');
+var bookshelf = Bookshelf.initialize({
   client: 'sqlite',
   connection: {
     filename: ':memory:'
@@ -10,15 +8,11 @@ var knx = require('knex')({
     max: 1
   }
 });
-
-var bookshelf = require('bookshelf')(knx);
-
 var knex = bookshelf.knex;
 
 var User = bookshelf.Model.extend({
   tableName: 'users'
 });
-
 var Author = bookshelf.Model.extend({
   tableName: 'authors',
   user: function() {
@@ -36,20 +30,20 @@ var Article = bookshelf.Model.extend({
 var ArticleAuthor = bookshelf.Model.extend({
   tableName: 'articles_authors',
   author: function () {
-    return this.belongsTo(Author);
+    return this.belongsTo(database.Author);
   }
 });
 
 function resetTable(done) {
   knex.schema.dropTableIfExists('authors')
   .then(function () {
-    return knex.schema.dropTableIfExists('users');
+    return knex.schema.dropTableIfExists('users')
   })
   .then(function () {
-    return knex.schema.dropTableIfExists('articles');
+    return knex.schema.dropTableIfExists('articles')
   })
   .then(function () {
-    return knex.schema.dropTableIfExists('articles_authors');
+    return knex.schema.dropTableIfExists('articles_authors')
   })
   .then(function () {
     return knex.schema.createTable('articles_authors', function (table) {
@@ -64,7 +58,6 @@ function resetTable(done) {
     return knex.schema.createTable('articles', function (table) {
       table.increments('id').primary();
       table.string('content');
-      table.integer('legacy_item_id');
     });
   })
   .then(function () {
@@ -83,7 +76,6 @@ function resetTable(done) {
       table.string('short_name');
       table.string('origin');
       table.integer('user_id');
-      table.integer('legacy_author_id');
     });
   })
   .then(function () {
@@ -95,8 +87,7 @@ function resetTable(done) {
     return Author.forge().save({
       long_name: 'George Abitbol',
       short_name: 'G.A.',
-      origin: 'L\'homme le plus classe du monde',
-      legacy_author_id: 3
+      origin: 'L\'homme le plus classe du monde'
     });
   })
   .then(function () {
@@ -104,14 +95,12 @@ function resetTable(done) {
       long_name: 'George Abitbol2',
       short_name: 'G.A.2',
       origin: 'L\'homme le plus classe du monde2',
-      user_id: 1,
-      legacy_author_id: 2
+      user_id: 1
     });
   })
   .then(function () {
     return Article.forge().save({
-      content: 'My article',
-      legacy_item_id: 5
+      content: 'My article'
     });
   })
   .then(function () {
@@ -128,7 +117,6 @@ function resetTable(done) {
   })
   .exec(done);
 }
-/* jshint camelcase:true */
 
 exports.User = User;
 exports.Author = Author;
