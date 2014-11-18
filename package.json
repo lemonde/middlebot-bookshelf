@@ -17,17 +17,15 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "bookshelf": "^0.7.9",
     "format-keys": "^0.1.0",
     "i": "^0.3.2",
-    "inherits": "^2.0.1",
-    "knex": "^0.7.3",
     "lodash": "^2.4.1",
     "nconf": "^0.6.9",
     "node-error": "git+ssh://git@github.com:lemonde/node-error.git#v0.1.0",
     "underscore.string": "^2.3.3"
   },
   "devDependencies": {
+    "bookshelf": "^0.6.10",
     "chai": "^1.9.1",
     "mocha": "^1.18.2",
     "sqlite3": "^2.2.3",

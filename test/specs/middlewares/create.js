@@ -19,7 +19,6 @@ describe('create middleware', function () {
     .get('/')
     .expect(201, {
       id: 3,
-      legacyAuthorId: null,
       longName: 'Georges Abitbol',
       shortName: 'G.A.',
       createdAt: null,
@@ -51,7 +50,6 @@ describe('create middleware', function () {
     .get('/')
     .expect(201, {
       id: 3,
-      legacyAuthorId: null,
       longName: 'Georges Abitbol',
       shortName: 'G.A.',
       userId: 1,

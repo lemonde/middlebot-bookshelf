@@ -16,7 +16,6 @@ describe('update middleware', function () {
     .get('/')
     .expect(200, {
       id: 1,
-      legacyAuthorId: 3,
       longName: 'Classe man, top of the pop',
       shortName: 'G.A.',
       createdAt: null,
@@ -59,7 +58,6 @@ describe('update middleware', function () {
     .get('/')
     .expect(200, {
       id: 2,
-      legacyAuthorId: 2,
       longName: 'Classe man, top of the pop',
       shortName: 'G.A.2',
       createdAt: null,

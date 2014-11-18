@@ -1,5 +1,3 @@
-'use strict';
-
 var request = require('supertest');
 var find = require('../../../index').find;
 var db = require('../../fixtures/database');
@@ -17,7 +15,6 @@ describe('find middleware', function () {
     .get('/')
     .expect(200, {
       id: 1,
-      legacyAuthorId: 3,
       longName: 'George Abitbol',
       shortName: 'G.A.',
       createdAt: null,
@@ -57,7 +54,6 @@ describe('find middleware', function () {
     .get('/')
     .expect(200, {
       id: 2,
-      legacyAuthorId: 2,
       longName: 'George Abitbol2',
       shortName: 'G.A.2',
       createdAt: null,
@@ -83,7 +79,6 @@ describe('find middleware', function () {
     .get('/')
     .expect(200, {
       id: 2,
-      legacyAuthorId: 2,
       longName: 'George Abitbol2',
       shortName: 'G.A.2',
       createdAt: null,
@@ -94,28 +89,6 @@ describe('find middleware', function () {
         id: 1,
         firstName: 'John'
       }
-    }, done);
-  });
-
-  it('should be possible to specify default option "target"', function (done) {
-    var server = createServer(find({
-      model: db.Author,
-      target: 'legacy_author_id'
-    }), {
-      params: { id: 3 }
-    });
-
-    request(server)
-    .get('/')
-    .expect(200, {
-      id: 1,
-      legacyAuthorId: 3,
-      longName: 'George Abitbol',
-      shortName: 'G.A.',
-      createdAt: null,
-      origin: 'L\'homme le plus classe du monde',
-      updatedAt: null,
-      userId: null
     }, done);
   });
 });
