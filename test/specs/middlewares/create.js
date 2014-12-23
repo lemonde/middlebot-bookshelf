@@ -70,4 +70,34 @@ describe('create middleware', function () {
       });
     });
   });
+
+  it('should create an author with indexKey option', function (done) {
+    var server = createServer(create({ model: db.Author, indexKey: 'user_id' }), {
+      body: {
+        longName: 'Georges Abitbol',
+        shortName: 'G.A.',
+        userId: 23
+      }
+    });
+
+    request(server)
+    .get('/')
+    .expect(201, {
+      id: 3,
+      longName: 'Georges Abitbol',
+      shortName: 'G.A.',
+      createdAt: null,
+      origin: null,
+      updatedAt: null,
+      userId: 23,
+    })
+    .end(function (err) {
+      if (err) return done(err);
+      db.Author.forge({ id: 3 }).fetch().exec(function (err, model) {
+        if (err) return done(err);
+        expect(model).to.not.be.null;
+        done();
+      });
+    });
+  });
 });
