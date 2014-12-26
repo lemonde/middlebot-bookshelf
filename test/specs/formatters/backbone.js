@@ -2,8 +2,10 @@
 
 var chai = require('chai');
 var expect = chai.expect;
-
-var bookshelf = require('bookshelf').initialize({ client: 'sqlite' });
+var knex = require('knex')({
+  client: 'sqlite'
+});
+var bookshelf = require('bookshelf')(knex);
 var backboneFormatter = require('../../../lib/formatters/backbone');
 
 describe('#formatBackboneModel', function () {

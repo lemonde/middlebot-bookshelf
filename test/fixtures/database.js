@@ -1,5 +1,4 @@
-var Bookshelf = require('bookshelf');
-var bookshelf = Bookshelf.initialize({
+var knex = require('knex')({
   client: 'sqlite',
   connection: {
     filename: ':memory:'
@@ -8,7 +7,8 @@ var bookshelf = Bookshelf.initialize({
     max: 1
   }
 });
-var knex = bookshelf.knex;
+
+var bookshelf = require('bookshelf')(knex);
 
 var User = bookshelf.Model.extend({
   tableName: 'users'
