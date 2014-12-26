@@ -16,7 +16,7 @@ describe('checkNotExist middleware', function () {
 
     request(server)
     .get('/')
-    .expect(400, 'Relation "authors" already exists.', done);
+    .expect(400, JSON.stringify('Relation "authors" already exists.'), done);
   });
 
   it('should return a custom error if the author exists and one is provided', function (done) {
@@ -30,7 +30,7 @@ describe('checkNotExist middleware', function () {
 
     request(server)
     .get('/')
-    .expect(500, 'custom error', done);
+    .expect(500, JSON.stringify('custom error'), done);
   });
 
   it('should not return an error if author doesn\'t exist', function (done) {
@@ -84,7 +84,7 @@ describe('checkNotExist middleware', function () {
 
       request(server)
       .get('/')
-      .expect(400, 'Properties are missing ["id"].', done);
+      .expect(400, JSON.stringify('Properties are missing ["id"].'), done);
     });
 
     it('should return an error if one of the key is null', function (done) {
@@ -98,7 +98,7 @@ describe('checkNotExist middleware', function () {
 
       request(server)
       .get('/')
-      .expect(400, 'Properties are missing ["id"].', done);
+      .expect(400, JSON.stringify('Properties are missing ["id"].'), done);
     });
   });
 

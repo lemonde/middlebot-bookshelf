@@ -21,7 +21,7 @@ function createServer(middleware, options){
       res.setHeader('Content-Type', 'application/json');
       res.statusCode = err ? (err.status || 500) : res.statusCode;
       var body = res.metadata ? _.pick(res, 'metadata', 'body') : res.body;
-      res.end(err ? err.message : JSON.stringify(body));
+      res.end(err ?  JSON.stringify(err.message) : JSON.stringify(body));
     });
   });
 }
