@@ -31,7 +31,7 @@ describe('find middleware', function () {
 
     request(server)
     .get('/')
-    .expect(400, 'Author not found.', done);
+    .expect(400, JSON.stringify('Author not found.'), done);
   });
 
   it('should return a custom error when an object is not found and one is provided', function (done) {
@@ -41,7 +41,7 @@ describe('find middleware', function () {
 
     request(server)
     .get('/')
-    .expect(500, 'custom error', done);
+    .expect(500, JSON.stringify('custom error'), done);
   });
 
   it('should be possible to add "withRelated" option in where', function (done) {

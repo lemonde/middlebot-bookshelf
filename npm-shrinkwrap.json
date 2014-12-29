@@ -4,28 +4,62 @@
   "dependencies": {
     "format-keys": {
       "version": "0.1.1",
-      "from": "format-keys@^0.1.0",
+      "from": "https://registry.npmjs.org/format-keys/-/format-keys-0.1.1.tgz",
       "resolved": "https://registry.npmjs.org/format-keys/-/format-keys-0.1.1.tgz"
     },
     "i": {
       "version": "0.3.2",
-      "from": "i@^0.3.2",
+      "from": "https://registry.npmjs.org/i/-/i-0.3.2.tgz",
       "resolved": "https://registry.npmjs.org/i/-/i-0.3.2.tgz"
     },
     "lodash": {
       "version": "2.4.1",
-      "from": "lodash@^2.4.1",
+      "from": "https://registry.npmjs.org/lodash/-/lodash-2.4.1.tgz",
       "resolved": "https://registry.npmjs.org/lodash/-/lodash-2.4.1.tgz"
+    },
+    "nconf": {
+      "version": "0.7.1",
+      "from": "https://registry.npmjs.org/nconf/-/nconf-0.7.1.tgz",
+      "resolved": "https://registry.npmjs.org/nconf/-/nconf-0.7.1.tgz",
+      "dependencies": {
+        "async": {
+          "version": "0.9.0",
+          "from": "https://registry.npmjs.org/async/-/async-0.9.0.tgz",
+          "resolved": "https://registry.npmjs.org/async/-/async-0.9.0.tgz"
+        },
+        "ini": {
+          "version": "1.3.2",
+          "from": "https://registry.npmjs.org/ini/-/ini-1.3.2.tgz",
+          "resolved": "https://registry.npmjs.org/ini/-/ini-1.3.2.tgz"
+        },
+        "optimist": {
+          "version": "0.6.1",
+          "from": "https://registry.npmjs.org/optimist/-/optimist-0.6.1.tgz",
+          "resolved": "https://registry.npmjs.org/optimist/-/optimist-0.6.1.tgz",
+          "dependencies": {
+            "wordwrap": {
+              "version": "0.0.2",
+              "from": "https://registry.npmjs.org/wordwrap/-/wordwrap-0.0.2.tgz",
+              "resolved": "https://registry.npmjs.org/wordwrap/-/wordwrap-0.0.2.tgz"
+            },
+            "minimist": {
+              "version": "0.0.10",
+              "from": "https://registry.npmjs.org/minimist/-/minimist-0.0.10.tgz",
+              "resolved": "https://registry.npmjs.org/minimist/-/minimist-0.0.10.tgz"
+            }
+          }
+        }
+      }
     },
     "node-error": {
       "version": "0.1.0",
-      "from": "git+ssh://git@github.com:lemonde/node-error.git#v0.1.0",
+      "from": "node-error@git+ssh://git@github.com:lemonde/node-error.git#e347a086d2c5f95d34712a2e4e211a8adc3e9ff8",
       "resolved": "git+ssh://git@github.com:lemonde/node-error.git#e347a086d2c5f95d34712a2e4e211a8adc3e9ff8"
     },
     "underscore.string": {
-      "version": "2.3.3",
-      "from": "underscore.string@^2.3.3",
-      "resolved": "https://registry.npmjs.org/underscore.string/-/underscore.string-2.3.3.tgz"
+      "version": "2.4.0",
+      "from": "https://registry.npmjs.org/underscore.string/-/underscore.string-2.4.0.tgz",
+      "resolved": "https://registry.npmjs.org/underscore.string/-/underscore.string-2.4.0.tgz"
     }
   }
 }

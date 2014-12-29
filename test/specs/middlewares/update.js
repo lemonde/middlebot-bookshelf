@@ -33,7 +33,7 @@ describe('update middleware', function () {
 
     request(server)
     .get('/')
-    .expect(400, 'Author not found.', done);
+    .expect(400, JSON.stringify('Author not found.'), done);
   });
 
   it('should return a custom error if the author to update is not found and one is provided', function (done) {
@@ -44,7 +44,7 @@ describe('update middleware', function () {
 
     request(server)
     .get('/')
-    .expect(500, 'custom error', done);
+    .expect(500, JSON.stringify('custom error'), done);
   });
 
   it('should support withRelated', function (done) {
