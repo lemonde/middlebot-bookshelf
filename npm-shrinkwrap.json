@@ -2,11 +2,6 @@
   "name": "middlebot-bookshelf",
   "version": "0.7.3",
   "dependencies": {
-    "format-keys": {
-      "version": "0.1.1",
-      "from": "https://registry.npmjs.org/format-keys/-/format-keys-0.1.1.tgz",
-      "resolved": "https://registry.npmjs.org/format-keys/-/format-keys-0.1.1.tgz"
-    },
     "i": {
       "version": "0.3.2",
       "from": "https://registry.npmjs.org/i/-/i-0.3.2.tgz",
