@@ -1,6 +1,6 @@
 {
   "name": "middlebot-bookshelf",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "dependencies": {
     "format-keys": {
       "version": "0.1.1",
