@@ -1,7 +1,7 @@
 {
   "name": "middlebot-bookshelf",
   "description": "Collection of bookshelf middlewares.",
-  "version": "0.8.0",
+  "version": "0.7.3",
   "keywords": [
     "middlebot",
     "bookshelf"
