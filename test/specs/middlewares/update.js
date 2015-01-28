@@ -8,7 +8,7 @@ describe('update middleware', function () {
 
   it('should update an author', function (done) {
     var server = createServer(update({ model: db.Author }), {
-      body: { longName: 'Classe man, top of the pop' },
+      body: { long_name: 'Classe man, top of the pop' },
       params: { id: 1 }
     });
 
@@ -16,18 +16,18 @@ describe('update middleware', function () {
     .get('/')
     .expect(200, {
       id: 1,
-      longName: 'Classe man, top of the pop',
-      shortName: 'G.A.',
-      createdAt: null,
+      long_name: 'Classe man, top of the pop',
+      short_name: 'G.A.',
+      created_at: null,
       origin: 'L\'homme le plus classe du monde',
-      updatedAt: null,
-      userId: null
+      updated_at: null,
+      user_id: null
     }, done);
   });
 
   it('should return an error if the author to update is not found', function (done) {
     var server = createServer(update({ model: db.Author }), {
-      body: { longName: 'Classe man, top of the pop' },
+      body: { long_name: 'Classe man, top of the pop' },
       params: { id: 10 }
     });
 
@@ -38,7 +38,7 @@ describe('update middleware', function () {
 
   it('should return a custom error if the author to update is not found and one is provided', function (done) {
     var server = createServer(update({ model: db.Author, error: new Error('custom error') }), {
-      body: { longName: 'Classe man, top of the pop' },
+      body: { long_name: 'Classe man, top of the pop' },
       params: { id: 10 }
     });
 
@@ -49,7 +49,7 @@ describe('update middleware', function () {
 
   it('should support withRelated', function (done) {
     var server = createServer(update({ model: db.Author }), {
-      body: { longName: 'Classe man, top of the pop' },
+      body: { long_name: 'Classe man, top of the pop' },
       query: { withRelated: 'user' },
       params: { id: 2 }
     });
@@ -58,14 +58,14 @@ describe('update middleware', function () {
     .get('/')
     .expect(200, {
       id: 2,
-      longName: 'Classe man, top of the pop',
-      shortName: 'G.A.2',
-      createdAt: null,
+      long_name: 'Classe man, top of the pop',
+      short_name: 'G.A.2',
+      created_at: null,
       origin: 'L\'homme le plus classe du monde2',
-      updatedAt: null,
-      userId: 1,
+      updated_at: null,
+      user_id: 1,
       user: {
-        firstName: 'John',
+        first_name: 'John',
         id: 1
       }
     }, done);

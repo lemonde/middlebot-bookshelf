@@ -10,8 +10,8 @@ describe('create middleware', function () {
   it('should create an author', function (done) {
     var server = createServer(create({ model: db.Author }), {
       body: {
-        longName: 'Georges Abitbol',
-        shortName: 'G.A.'
+        long_name: 'Georges Abitbol',
+        short_name: 'G.A.'
       }
     });
 
@@ -19,12 +19,12 @@ describe('create middleware', function () {
     .get('/')
     .expect(201, {
       id: 3,
-      longName: 'Georges Abitbol',
-      shortName: 'G.A.',
-      createdAt: null,
+      long_name: 'Georges Abitbol',
+      short_name: 'G.A.',
+      created_at: null,
       origin: null,
-      updatedAt: null,
-      userId: null
+      updated_at: null,
+      user_id: null
     })
     .end(function (err) {
       if (err) return done(err);
@@ -39,9 +39,9 @@ describe('create middleware', function () {
   it('should support withRelated', function (done) {
     var server = createServer(create({ model: db.Author }), {
       body: {
-        longName: 'Georges Abitbol',
-        shortName: 'G.A.',
-        userId: 1
+        long_name: 'Georges Abitbol',
+        short_name: 'G.A.',
+        user_id: 1
       },
       query: { withRelated: 'user' }
     });
@@ -50,16 +50,16 @@ describe('create middleware', function () {
     .get('/')
     .expect(201, {
       id: 3,
-      longName: 'Georges Abitbol',
-      shortName: 'G.A.',
-      userId: 1,
+      long_name: 'Georges Abitbol',
+      short_name: 'G.A.',
+      user_id: 1,
       user: {
         id: 1,
-        firstName: 'John'
+        first_name: 'John'
       },
-      createdAt: null,
+      created_at: null,
       origin: null,
-      updatedAt: null
+      updated_at: null
     })
     .end(function (err) {
       if (err) return done(err);
@@ -74,9 +74,9 @@ describe('create middleware', function () {
   it('should create an author with indexKey option', function (done) {
     var server = createServer(create({ model: db.Author, indexKey: 'user_id' }), {
       body: {
-        longName: 'Georges Abitbol',
-        shortName: 'G.A.',
-        userId: 23
+        long_name: 'Georges Abitbol',
+        short_name: 'G.A.',
+        user_id: 23
       }
     });
 
@@ -84,12 +84,12 @@ describe('create middleware', function () {
     .get('/')
     .expect(201, {
       id: 3,
-      longName: 'Georges Abitbol',
-      shortName: 'G.A.',
-      createdAt: null,
+      long_name: 'Georges Abitbol',
+      short_name: 'G.A.',
+      created_at: null,
       origin: null,
-      updatedAt: null,
-      userId: 23,
+      updated_at: null,
+      user_id: 23,
     })
     .end(function (err) {
       if (err) return done(err);

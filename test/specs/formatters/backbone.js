@@ -13,7 +13,7 @@ describe('#formatBackboneModel', function () {
     var model = new bookshelf.Model({ big_foo: 'bar' });
 
     model = backboneFormatter.formatModel(model);
-    expect(model).to.eql({ bigFoo: 'bar' });
+    expect(model).to.eql({ big_foo: 'bar' });
   });
 });
 
@@ -23,7 +23,7 @@ describe('#formatBackboneCollection', function () {
     var collection = new bookshelf.Collection([model]);
 
     collection = backboneFormatter.formatCollection(collection);
-    expect(collection).to.eql([{ bigFoo: 'bar' }]);
+    expect(collection).to.eql([{ big_foo: 'bar' }]);
 
   });
 });

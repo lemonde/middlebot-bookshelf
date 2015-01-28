@@ -15,25 +15,25 @@ describe('find with related middleware', function () {
     .get('/')
     .expect(200, {
       body: [{
-        PivotArticleId: 1,
-        PivotAuthorId: 2,
-        createdAt: null,
+        _pivot_article_id: 1,
+        _pivot_author_id: 2,
+        created_at: null,
         id: 2,
-        longName: 'George Abitbol2',
+        long_name: 'George Abitbol2',
         origin: 'L\'homme le plus classe du monde2',
-        shortName: 'G.A.2',
-        updatedAt: null,
-        userId: 1
+        short_name: 'G.A.2',
+        updated_at: null,
+        user_id: 1
       }, {
-        PivotArticleId: 1,
-        PivotAuthorId: 1,
-        createdAt: null,
+        _pivot_article_id: 1,
+        _pivot_author_id: 1,
+        created_at: null,
         id: 1,
-        longName: 'George Abitbol',
+        long_name: 'George Abitbol',
         origin: 'L\'homme le plus classe du monde',
-        shortName: 'G.A.',
-        updatedAt: null,
-        userId: null
+        short_name: 'G.A.',
+        updated_at: null,
+        user_id: null
       }],
       metadata: {
         count: null,
@@ -53,15 +53,15 @@ describe('find with related middleware', function () {
     .get('/')
     .expect(200, {
       body: [{
-        PivotArticleId: 1,
-        PivotAuthorId: 2,
-        createdAt: null,
+        _pivot_article_id: 1,
+        _pivot_author_id: 2,
+        created_at: null,
         id: 2,
-        longName: 'George Abitbol2',
+        long_name: 'George Abitbol2',
         origin: 'L\'homme le plus classe du monde2',
-        shortName: 'G.A.2',
-        updatedAt: null,
-        userId: 1
+        short_name: 'G.A.2',
+        updated_at: null,
+        user_id: 1
       }],
       metadata: {
         count: null,
@@ -81,25 +81,25 @@ describe('find with related middleware', function () {
     .get('/')
     .expect(200, {
       body: [{
-        PivotArticleId: 1,
-        PivotAuthorId: 2,
-        createdAt: null,
+        _pivot_article_id: 1,
+        _pivot_author_id: 2,
+        created_at: null,
         id: 2,
-        longName: 'George Abitbol2',
+        long_name: 'George Abitbol2',
         origin: 'L\'homme le plus classe du monde2',
-        shortName: 'G.A.2',
-        updatedAt: null,
-        userId: 1
+        short_name: 'G.A.2',
+        updated_at: null,
+        user_id: 1
       }, {
-        PivotArticleId: 1,
-        PivotAuthorId: 1,
-        createdAt: null,
+        _pivot_article_id: 1,
+        _pivot_author_id: 1,
+        created_at: null,
         id: 1,
-        longName: 'George Abitbol',
+        long_name: 'George Abitbol',
         origin: 'L\'homme le plus classe du monde',
-        shortName: 'G.A.',
-        updatedAt: null,
-        userId: null
+        short_name: 'G.A.',
+        updated_at: null,
+        user_id: null
       }],
       metadata: {
         count: 2,
@@ -113,32 +113,32 @@ describe('find with related middleware', function () {
   it('should be possible to sort the related objects', function (done) {
     var server = createServer(findRelated({ model: db.Article, related: 'authors' }), {
       params: { id: 1 },
-      query: {sortBy:'longName'}
+      query: {sortBy:'long_name'}
     });
 
     request(server)
     .get('/')
     .expect(200, {
       body: [{
-        PivotArticleId: 1,
-        PivotAuthorId: 2,
-        createdAt: null,
+        _pivot_article_id: 1,
+        _pivot_author_id: 2,
+        created_at: null,
         id: 2,
-        longName: 'George Abitbol2',
+        long_name: 'George Abitbol2',
         origin: 'L\'homme le plus classe du monde2',
-        shortName: 'G.A.2',
-        updatedAt: null,
-        userId: 1
+        short_name: 'G.A.2',
+        updated_at: null,
+        user_id: 1
       }, {
-        PivotArticleId: 1,
-        PivotAuthorId: 1,
-        createdAt: null,
+        _pivot_article_id: 1,
+        _pivot_author_id: 1,
+        created_at: null,
         id: 1,
-        longName: 'George Abitbol',
+        long_name: 'George Abitbol',
         origin: 'L\'homme le plus classe du monde',
-        shortName: 'G.A.',
-        updatedAt: null,
-        userId: null
+        short_name: 'G.A.',
+        updated_at: null,
+        user_id: null
       }],
       metadata: {
         count: null,
@@ -157,15 +157,15 @@ describe('find with related middleware', function () {
     .get('/')
     .expect(200, {
       body: [{
-        PivotArticleId: 1,
-        PivotAuthorId: 1,
-        createdAt: null,
+        _pivot_article_id: 1,
+        _pivot_author_id: 1,
+        created_at: null,
         id: 1,
-        longName: 'George Abitbol',
+        long_name: 'George Abitbol',
         origin: 'L\'homme le plus classe du monde',
-        shortName: 'G.A.',
-        updatedAt: null,
-        userId: null
+        short_name: 'G.A.',
+        updated_at: null,
+        user_id: null
       }],
       metadata: {
         count: null,
@@ -179,22 +179,22 @@ describe('find with related middleware', function () {
 
     var server = createServer(findRelated({ model: db.Article, related: 'authors' }), {
       params: { id: 1 },
-      query: {shortName: 'G.A.'}
+      query: {short_name: 'G.A.'}
     });
 
     request(server)
     .get('/')
     .expect(200, {
       body: [{
-        PivotArticleId: 1,
-        PivotAuthorId: 1,
-        createdAt: null,
+        _pivot_article_id: 1,
+        _pivot_author_id: 1,
+        created_at: null,
         id: 1,
-        longName: 'George Abitbol',
+        long_name: 'George Abitbol',
         origin: 'L\'homme le plus classe du monde',
-        shortName: 'G.A.',
-        updatedAt: null,
-        userId: null
+        short_name: 'G.A.',
+        updated_at: null,
+        user_id: null
       }],
       metadata: {
         count: null,
@@ -213,15 +213,15 @@ describe('find with related middleware', function () {
     .get('/')
     .expect(200, {
       body: {
-        PivotArticleId: 1,
-        PivotAuthorId: 1,
-        createdAt: null,
+        _pivot_article_id: 1,
+        _pivot_author_id: 1,
+        created_at: null,
         id: 1,
-        longName: 'George Abitbol',
+        long_name: 'George Abitbol',
         origin: 'L\'homme le plus classe du monde',
-        shortName: 'G.A.',
-        updatedAt: null,
-        userId: null
+        short_name: 'G.A.',
+        updated_at: null,
+        user_id: null
       },
       metadata: {
         count: null,

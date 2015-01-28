@@ -15,12 +15,12 @@ describe('find middleware', function () {
     .get('/')
     .expect(200, {
       id: 1,
-      longName: 'George Abitbol',
-      shortName: 'G.A.',
-      createdAt: null,
+      long_name: 'George Abitbol',
+      short_name: 'G.A.',
+      created_at: null,
       origin: 'L\'homme le plus classe du monde',
-      updatedAt: null,
-      userId: null
+      updated_at: null,
+      user_id: null
     }, done);
   });
 
@@ -54,15 +54,15 @@ describe('find middleware', function () {
     .get('/')
     .expect(200, {
       id: 2,
-      longName: 'George Abitbol2',
-      shortName: 'G.A.2',
-      createdAt: null,
+      long_name: 'George Abitbol2',
+      short_name: 'G.A.2',
+      created_at: null,
       origin: 'L\'homme le plus classe du monde2',
-      updatedAt: null,
-      userId: 1,
+      updated_at: null,
+      user_id: 1,
       user: {
         id: 1,
-        firstName: 'John'
+        first_name: 'John'
       }
     }, done);
   });
@@ -79,15 +79,15 @@ describe('find middleware', function () {
     .get('/')
     .expect(200, {
       id: 2,
-      longName: 'George Abitbol2',
-      shortName: 'G.A.2',
-      createdAt: null,
+      long_name: 'George Abitbol2',
+      short_name: 'G.A.2',
+      created_at: null,
       origin: 'L\'homme le plus classe du monde2',
-      updatedAt: null,
-      userId: 1,
+      updated_at: null,
+      user_id: 1,
       user: {
         id: 1,
-        firstName: 'John'
+        first_name: 'John'
       }
     }, done);
   });
